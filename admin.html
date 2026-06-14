@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pearl Accessory Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#120f0d;--surface:#1c1714;--surface2:#26201c;--line:rgba(255,255,255,.08);--text:#f5ede2;--muted:#bdaa95;
+      --gold:#bb9050;--gold2:#d7b27a;--danger:#be5f5f;--ok:#5f9b70;--info:#6b5a45;--r:22px;--shadow:0 20px 50px rgba(0,0,0,.24)
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#120f0d,#1f1915);
+      color:var(--text);
+      font-family:'Cairo','Inter',sans-serif
+    }
+    img{max-width:100%;display:block}
+    .wrap{width:min(1180px,calc(100% - 32px));margin:26px auto 40px}
+    .top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:20px}
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{
+      width:54px;height:54px;border-radius:50%;overflow:hidden;
+      background:linear-gradient(180deg,var(--gold2),#8e6835);
+      display:grid;place-items:center;border:1px solid rgba(255,255,255,.08)
+    }
+    .logo img{width:100%;height:100%;object-fit:cover}
+    .sub{color:var(--muted)}
+    .layout{display:grid;grid-template-columns:.95fr 1.05fr;gap:22px}
+    .panel{
+      background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      padding:22px;
+      box-shadow:var(--shadow)
+    }
+    h1,h2,h3{margin:0 0 10px}
+    .mini{color:var(--muted);line-height:1.7}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .full{grid-column:1/-1}
+    .field,textarea,select,input[type="file"]{
+      width:100%;
+      padding:14px 15px;
+      min-height:52px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background:var(--surface2);
+      color:var(--text);
+      font:inherit
+    }
+    textarea{
+      min-height:110px;
+      resize:vertical
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px
+    }
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:13px 16px;
+      min-height:50px;
+      cursor:pointer;
+      font-weight:700;
+      text-align:center
+    }
+    .btn.primary{background:var(--gold);color:#1f140c}
+    .btn.alt{background:#302822;color:#f6ede1}
+    .btn.danger{background:var(--danger);color:white}
+    .btn.ok{background:var(--ok);color:white}
+    .btn[disabled]{opacity:.6;cursor:not-allowed}
+    .auth-box{max-width:520px;margin:40px auto}
+    .hidden{display:none!important}
+    .list{
+      display:grid;
+      gap:12px;
+      margin-top:12px;
+      max-height:72vh;
+      overflow:auto;
+      padding-right:4px
+    }
+    .item{
+      display:grid;
+      grid-template-columns:82px 1fr auto;
+      gap:12px;
+      align-items:center;
+      background:rgba(255,255,255,.04);
+      padding:10px;
+      border-radius:16px
+    }
+    .item img{
+      width:82px;
+      height:82px;
+      object-fit:cover;
+      border-radius:14px
+    }
+    .pill{
+      display:inline-block;
+      background:rgba(187,144,80,.16);
+      color:#f2d7ab;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:.8rem;
+      margin-top:6px
+    }
+    .status{
+      padding:12px 14px;
+      border-radius:14px;
+      margin-bottom:14px;
+      background:rgba(255,255,255,.05);
+      line-height:1.6;
+      word-break:break-word
+    }
+    .preview{
+      width:100%;
+      max-width:240px;
+      aspect-ratio:4/5;
+      object-fit:cover;
+      border-radius:18px;
+      background:#2b241f;
+      border:1px solid rgba(255,255,255,.08)
+    }
+    .preview-wrap{display:grid;gap:10px}
+    .upload-row{display:grid;gap:10px}
+    .helper{
+      font-size:.92rem;
+      color:var(--muted)
+    }
+
+    @media (max-width:900px){
+      .layout{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+      .actions{display:grid;grid-template-columns:1fr}
+      .actions .btn{width:100%}
+      .top{align-items:flex-start;flex-direction:column}
+      .wrap{width:min(100%,calc(100% - 20px));margin:16px auto 28px}
+      .panel{padding:16px}
+      .preview{max-width:100%;width:100%}
+      .item{grid-template-columns:64px 1fr}
+      .item img{width:64px;height:64px}
+      .item button{grid-column:1/-1;width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo"><img src="./logo.jpeg" alt="Pearl logo"></div>
+        <div>
+          <h1>Pearl Accessory Admin</h1>
+          <div class="sub">Product management</div>
+        </div>
+      </div>
+      <div class="actions" style="margin-top:0">
+        <button class="btn alt" id="logoutBtn" type="button">Logout</button>
+      </div>
+    </div>
+
+    <section id="authView" class="auth-box panel">
+      <h2>Owner login</h2>
+      <p class="mini">Login with your Supabase owner/admin account.</p>
+      <div id="authStatus" class="status">Not logged in.</div>
+      <div class="grid">
+        <input class="field full" id="loginEmail" type="email" placeholder="Owner email">
+        <input class="field full" id="loginPassword" type="password" placeholder="Password">
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="loginBtn" type="button">Login</button>
+      </div>
+    </section>
+
+    <section id="adminView" class="hidden">
+      <div class="panel" style="margin-bottom:18px">
+        <h2>Quick stats</h2>
+        <p class="mini">Overview of your product catalog.</p>
+        <div class="grid">
+          <div class="status"><strong id="statProducts">0</strong><div class="mini">Products</div></div>
+          <div class="status"><strong id="statFeatured">0</strong><div class="mini">Featured</div></div>
+          <div class="status"><strong id="statAvailable">0</strong><div class="mini">Available</div></div>
+          <div class="status"><strong id="statValue">0 MAD</strong><div class="mini">Catalog value</div></div>
+        </div>
+      </div>
+
+      <div class="layout">
+        <div class="panel">
+          <h2>Product form</h2>
+          <p class="mini">Choose an image, preview it, upload it, then save the product.</p>
+          <div id="saveStatus" class="status">Ready.</div>
+
+          <div class="grid">
+            <input class="field" id="name_ar" placeholder="Arabic name">
+            <input class="field" id="category" placeholder="Category">
+
+            <input class="field" id="name_fr" placeholder="French name">
+            <input class="field" id="price" type="number" value="100" placeholder="Price">
+
+            <input class="field" id="name_en" placeholder="English name">
+<input class="field" id="shipping" type="number" value="35" placeholder="Shipping">
+            <div class="full upload-row">
+              <input class="field" id="image_url" placeholder="Image URL will appear here after upload" readonly>
+              <div class="helper">Step 1: choose image. Step 2: upload image. Step 3: save product.</div>
+              <input id="image_file" type="file" accept="image/*">
+              <button class="btn ok" id="uploadImageBtn" type="button">Upload selected image</button>
+            </div>
+
+            <div class="full preview-wrap">
+              <img id="imagePreview" class="preview" src="./logo.jpeg" alt="Product preview" onerror="this.src='./logo.jpeg'">
+              <div class="helper" id="imageMeta">No image selected yet.</div>
+            </div>
+
+            <input class="field" id="stock" placeholder="available / sold out" value="available">
+
+            <select class="field" id="featured">
+              <option value="false">Not featured</option>
+              <option value="true">Featured</option>
+            </select>
+
+            <textarea class="field full" id="description_ar" placeholder="Arabic description"></textarea>
+            <textarea class="field full" id="description_fr" placeholder="French description"></textarea>
+            <textarea class="field full" id="description_en" placeholder="English description"></textarea>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" id="saveBtn" type="button">Save product</button>
+            <button class="btn alt" id="newBtn" type="button">New product</button>
+            <button class="btn danger" id="deleteBtn" type="button">Delete product</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Products</h2>
+          <p class="mini">Click a product to edit it.</p>
+          <div id="listStatus" class="status">Loading products...</div>
+          <div class="list" id="productsList"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+const SUPABASE_URL = 'https://rvfkmmrteeukkmvzhteo.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2ZmttbXJ0ZWV1a2ttdnpodGVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzODk0ODQsImV4cCI6MjA5Njk2NTQ4NH0.2mpNlbpRFExMtI8_iJVzARC_d1qBx8lCQSuX-1MlzHI';
+const STORAGE_BUCKET = 'product-images';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let selectedId = null;
+let role = null;
+let selectedImageFile = null;
+
+const authView = document.getElementById('authView');
+const adminView = document.getElementById('adminView');
+const authStatus = document.getElementById('authStatus');
+const saveStatus = document.getElementById('saveStatus');
+const listStatus = document.getElementById('listStatus');
+const productsList = document.getElementById('productsList');
+const statProducts = document.getElementById('statProducts');
+const statFeatured = document.getElementById('statFeatured');
+const statAvailable = document.getElementById('statAvailable');
+const statValue = document.getElementById('statValue');
+const imagePreview = document.getElementById('imagePreview');
+const imageMeta = document.getElementById('imageMeta');
+const imageFileInput = document.getElementById('image_file');
+const imageUrlInput = document.getElementById('image_url');
+const uploadImageBtn = document.getElementById('uploadImageBtn');
+
+const fields = ['name_ar','name_fr','name_en','category','price','shipping','image_url','stock','featured','description_ar','description_fr','description_en'];
+
+function field(id){ return document.getElementById(id); }
+function setStatus(el, msg){ el.textContent = msg; }
+function updatePreview(url){ imagePreview.src = url || './logo.jpeg'; }
+function setImageMeta(text){ imageMeta.textContent = text; }
+
+function values(){
+  return {
+    name_ar: field('name_ar').value.trim(),
+    name_fr: field('name_fr').value.trim(),
+    name_en: field('name_en').value.trim(),
+    category: field('category').value.trim(),
+    price: Number(field('price').value || 100),
+shipping: Number(field('shipping').value || 35),
+    image_url: field('image_url').value.trim(),
+    stock: field('stock').value.trim() || 'available',
+    featured: field('featured').value === 'true',
+    description_ar: field('description_ar').value.trim(),
+    description_fr: field('description_fr').value.trim(),
+    description_en: field('description_en').value.trim()
+  };
+}
+
+function clearForm(){
+  selectedId = null;
+  selectedImageFile = null;
+  fields.forEach(id => {
+    const el = field(id);
+    if(!el) return;
+    if(el.tagName === 'SELECT') el.value = 'false';
+    else el.value = '';
+  });
+  field('price').value = 100;
+field('shipping').value = 35;
+  field('stock').value = 'available';
+  field('featured').value = 'false';
+  imageFileInput.value = '';
+  updatePreview('./logo.jpeg');
+  setImageMeta('No image selected yet.');
+  setStatus(saveStatus, 'New product form ready.');
+}
+
+function fillForm(p){
+  selectedId = p.id;
+  selectedImageFile = null;
+
+  field('name_ar').value = p.name_ar || '';
+  field('name_fr').value = p.name_fr || '';
+  field('name_en').value = p.name_en || '';
+  field('category').value = p.category || '';
+  field('price').value = p.price ?? 100;
+  field('shipping').value = p.shipping ?? 30;
+  field('image_url').value = p.image_url || '';
+  field('stock').value = p.stock || 'available';
+  field('featured').value = String(!!p.featured);
+  field('description_ar').value = p.description_ar || '';
+  field('description_fr').value = p.description_fr || '';
+  field('description_en').value = p.description_en || '';
+  imageFileInput.value = '';
+  updatePreview(p.image_url || './logo.jpeg');
+  setImageMeta(p.image_url ? 'Current saved image.' : 'No image selected yet.');
+  setStatus(saveStatus, `Editing: ${p.name_ar || p.name_en || p.name_fr || 'Product'}`);
+}
+
+async function fetchProfile(uid){
+  const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', uid).maybeSingle();
+  if(error) return null;
+  return data;
+}
+
+async function checkSession(){
+  const { data } = await supabaseClient.auth.getSession();
+  currentUser = data.session?.user || null;
+
+  if(!currentUser){
+    authView.classList.remove('hidden');
+    adminView.classList.add('hidden');
+    setStatus(authStatus, 'Not logged in.');
+    return;
+  }
+
+  const profile = await fetchProfile(currentUser.id);
+  role = profile?.role || null;
+
+  if(!profile || !['owner','admin'].includes(role)){
+    authView.classList.remove('hidden');
+    adminView.classList.add('hidden');
+    setStatus(authStatus, 'Logged in, but this account is not allowed in profiles table.');
+    return;
+  }
+
+  authView.classList.add('hidden');
+  adminView.classList.remove('hidden');
+  await loadProducts();
+}
+
+function previewSelectedImage(file){
+  const reader = new FileReader();
+
+  reader.onload = e => {
+    updatePreview(e.target.result);
+    setImageMeta(`${file.name} · ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+    setStatus(saveStatus, 'Image selected successfully. Now click Upload selected image.');
+  };
+
+  reader.onerror = () => {
+    updatePreview('./logo.jpeg');
+    setStatus(saveStatus, 'Could not preview this image.');
+  };
+
+  reader.readAsDataURL(file);
+}
+
+imageFileInput.addEventListener('change', e => {
+  const file = e.target.files?.[0];
+
+  if(!file){
+    selectedImageFile = null;
+    updatePreview('./logo.jpeg');
+    setImageMeta('No image selected yet.');
+    return;
+  }
+
+  if(!file.type.startsWith('image/')){
+    selectedImageFile = null;
+    setStatus(saveStatus, 'Please choose an image file only.');
+    return;
+  }
+
+  if(file.size > 10 * 1024 * 1024){
+    selectedImageFile = null;
+    setStatus(saveStatus, 'Image is too large. Please choose an image under 10 MB.');
+    return;
+  }
+
+  selectedImageFile = file;
+  previewSelectedImage(file);
+});
+
+async function uploadImageFromDevice(){
+  if(!selectedImageFile){
+    setStatus(saveStatus, 'Please choose an image first.');
+    return;
+  }
+
+  uploadImageBtn.disabled = true;
+  setStatus(saveStatus, 'Uploading image...');
+
+  const ext = (selectedImageFile.name.split('.').pop() || 'jpg').toLowerCase();
+  const safeName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const filePath = `products/${safeName}`;
+
+  const { error: uploadError } = await supabaseClient.storage
+    .from(STORAGE_BUCKET)
+    .upload(filePath, selectedImageFile, {
+      cacheControl: '3600',
+      upsert: false
+    });
+
+  if(uploadError){
+    uploadImageBtn.disabled = false;
+    setStatus(saveStatus, `Upload failed: ${uploadError.message}`);
+    return;
+  }
+
+  const { data } = supabaseClient.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
+  const publicUrl = data?.publicUrl || '';
+
+  if(!publicUrl){
+    uploadImageBtn.disabled = false;
+    setStatus(saveStatus, 'Upload finished but public URL was not generated.');
+    return;
+  }
+
+  imageUrlInput.value = publicUrl;
+  updatePreview(publicUrl);
+  setImageMeta('Image uploaded successfully.');
+  setStatus(saveStatus, 'Image uploaded successfully. Now click Save product.');
+  uploadImageBtn.disabled = false;
+}
+
+uploadImageBtn.addEventListener('click', uploadImageFromDevice);
+
+async function loadProducts(){
+  setStatus(listStatus, 'Loading products...');
+  const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending:false });
+
+  if(error){
+    setStatus(listStatus, error.message);
+    return;
+  }
+
+  const rows = data || [];
+  window.__PRODUCTS__ = rows;
+
+  statProducts.textContent = rows.length;
+  statFeatured.textContent = rows.filter(p => p.featured).length;
+  statAvailable.textContent = rows.filter(p => (p.stock || '').toLowerCase() !== 'sold out').length;
+  statValue.textContent = `${rows.reduce((sum,p) => sum + Number(p.price || 0), 0).toFixed(0)} MAD`;
+
+  if(!rows.length){
+    productsList.innerHTML = '<div class="status">No products yet.</div>';
+    setStatus(listStatus, 'No products found.');
+    return;
+  }
+
+  setStatus(listStatus, `${rows.length} product(s)`);
+
+  productsList.innerHTML = rows.map(p => `
+    <article class="item">
+      <img src="${p.image_url || './logo.jpeg'}" alt="${p.name_ar || p.name_en || 'product'}" onerror="this.src='./logo.jpeg'">
+      <div>
+        <strong>${p.name_ar || p.name_en || p.name_fr || 'Untitled'}</strong>
+        <div class="sub">${p.category || 'No category'} · ${Number(p.price || 0).toFixed(0)} MAD</div>
+        <div class="pill">${p.stock || 'available'}</div>
+      </div>
+      <button class="btn alt" type="button" onclick="editProductById('${p.id}')">Edit</button>
+    </article>
+  `).join('');
+}
+
+window.editProductById = function(id){
+  const p = (window.__PRODUCTS__ || []).find(x => x.id === id);
+  if(!p) return;
+  fillForm(p);
+  window.scrollTo({ top:0, behavior:'smooth' });
+};
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+
+  if(!email || !password){
+    setStatus(authStatus, 'Enter email and password.');
+    return;
+  }
+
+  setStatus(authStatus, 'Logging in...');
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+  if(error){
+    setStatus(authStatus, error.message);
+    return;
+  }
+
+  setStatus(authStatus, 'Login successful.');
+  await checkSession();
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await supabaseClient.auth.signOut();
+  location.reload();
+});
+
+document.getElementById('newBtn').addEventListener('click', clearForm);
+
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const payload = values();
+
+  if(!payload.name_ar){
+    setStatus(saveStatus, 'Arabic name is required.');
+    return;
+  }
+
+  if(!payload.image_url){
+    setStatus(saveStatus, 'Please upload the image first so the image URL is saved.');
+    return;
+  }
+
+  setStatus(saveStatus, 'Saving...');
+  let result;
+
+  if(selectedId){
+    result = await supabaseClient.from('products').update(payload).eq('id', selectedId).select().single();
+  } else {
+    result = await supabaseClient.from('products').insert(payload).select().single();
+  }
+
+  if(result.error){
+    setStatus(saveStatus, result.error.message);
+    return;
+  }
+
+  selectedId = result.data.id;
+  setStatus(saveStatus, 'Product saved successfully.');
+  await loadProducts();
+});
+
+document.getElementById('deleteBtn').addEventListener('click', async () => {
+  if(!selectedId){
+    setStatus(saveStatus, 'Select a product first.');
+    return;
+  }
+
+  const ok = window.confirm('Delete this product?');
+  if(!ok) return;
+
+  setStatus(saveStatus, 'Deleting...');
+  const { error } = await supabaseClient.from('products').delete().eq('id', selectedId);
+
+  if(error){
+    setStatus(saveStatus, error.message);
+    return;
+  }
+
+  clearForm();
+  setStatus(saveStatus, 'Product deleted successfully.');
+  await loadProducts();
+});
+
+supabaseClient.auth.onAuthStateChange(() => { checkSession(); });
+
+clearForm();
+checkSession();
+</script>
+</body>
+</html>
