@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pearl Accessory Live Orders</title>
+  <link rel="icon" type="image/jpeg" href="./logo.jpeg">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#120f0d;--surface:#1c1714;--surface2:#26201c;--line:rgba(255,255,255,.08);--text:#f5ede2;--muted:#bdaa95;--gold:#bb9050;--r:22px;--shadow:0 20px 50px rgba(0,0,0,.24)}
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#120f0d,#1f1915);color:var(--text);font-family:'Cairo','Inter',sans-serif}
+    .wrap{width:min(1440px,calc(100% - 20px));margin:12px auto 26px}
+    .top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:46px;height:46px;border-radius:50%;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+    .logo img{width:100%;height:100%;object-fit:cover}
+    .sub{color:var(--muted)}
+    .msg{padding:12px 14px;border-radius:14px;margin-bottom:12px;background:rgba(255,255,255,.05)}
+    .grid{display:grid;grid-template-columns:340px 1fr 430px;gap:14px}
+    .panel{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--shadow)}
+    .toolbar{display:grid;grid-template-columns:1fr 150px 150px 150px 160px;gap:10px;margin-bottom:12px}
+    .field,select,input{width:100%;padding:12px 13px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:var(--surface2);color:var(--text);font:inherit}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+    .stat{background:rgba(255,255,255,.04);border-radius:18px;padding:12px}
+    .stat strong{display:block;font-size:1.4rem}
+    .list{display:grid;gap:10px;max-height:78vh;overflow:auto;padding-right:4px}
+    .order{padding:12px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);cursor:pointer}
+    .order.active{outline:2px solid rgba(187,144,80,.55)}
+    .badge{display:inline-block;padding:5px 10px;border-radius:999px;font-size:.78rem;background:rgba(95,155,112,.18);color:#c9f2d4}
+    .row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .muted{color:var(--muted)}
+    .map{width:100%;height:330px;border:0;border-radius:18px;background:#2b241f}
+    .items{display:grid;gap:8px;margin-top:10px}
+    .item{display:flex;justify-content:space-between;gap:10px;padding:10px;border-radius:14px;background:rgba(255,255,255,.04)}
+    .btn{border:none;border-radius:999px;padding:10px 14px;cursor:pointer;background:var(--gold);color:#1f140c;font-weight:700}
+    .btn.alt{background:#302822;color:#f6ede1}
+    .btn.danger{background:#be5f5f;color:#fff}
+    .btn.ok{background:#5f9b70;color:#fff}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .detail-grid{display:grid;gap:10px}
+    .line{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.08)}
+    .line:last-child{border-bottom:none}
+    .empty{padding:20px;text-align:center;background:rgba(255,255,255,.04);border-radius:18px;border:1px dashed rgba(255,255,255,.12)}
+    .lang{display:flex;gap:8px;flex-wrap:wrap}
+    .lang button{border:none;border-radius:999px;padding:10px 14px;cursor:pointer;background:#302822;color:#f8efe3}
+    .lang button.active{background:var(--gold);color:#20160f}
+    @media (max-width:1200px){.grid{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:700px){.toolbar,.stats{grid-template-columns:1fr}.wrap{width:min(100%,calc(100% - 12px))}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="logo"><img src="./logo.jpeg" alt="logo"></div>
+      <div>
+        <h1 id="title" style="margin:0">طلبات مؤكدة مباشرة</h1>
+        <div class="sub" id="subtitle">تظهر الطلبات الجديدة تلقائياً</div>
+      </div>
+    </div>
+    <div class="lang">
+      <button data-lang="ar" class="active">العربية</button>
+      <button data-lang="fr">Français</button>
+      <button data-lang="en">English</button>
+    </div>
+  </div>
+
+  <div id="msg" class="msg">Ready.</div>
+
+  <div class="stats">
+    <div class="stat"><strong id="countAll">0</strong><div class="muted" id="labelConfirmed">Confirmed</div></div>
+    <div class="stat"><strong id="countToday">0</strong><div class="muted" id="labelToday">Today</div></div>
+    <div class="stat"><strong id="sumTotal">0 MAD</strong><div class="muted" id="labelRevenue">Revenue</div></div>
+    <div class="stat"><strong id="countNew">0</strong><div class="muted" id="labelSession">New this session</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="toolbar">
+      <input class="field" id="search" placeholder="Search name, phone, city, order no, tracking no">
+      <select id="dateFilter"><option value="all">All dates</option><option value="today">Today</option><option value="week">Last 7 days</option></select>
+      <select id="sortFilter"><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="high">Highest total</option><option value="low">Lowest total</option></select>
+      <select id="mapMode"><option value="open">Open map</option><option value="embed">Embed map</option></select>
+      <select id="mapProvider"><option value="osm">OpenStreetMap</option><option value="google">Google</option></select>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h2 id="ordersTitle" style="margin:0 0 10px">Orders</h2>
+        <div id="ordersList" class="list"></div>
+      </div>
+
+      <div class="panel">
+        <h2 id="detailsTitle" style="margin:0 0 10px">Order details</h2>
+        <div class="actions">
+          <button class="btn ok" id="markArrivedBtn" type="button">Arrived</button>
+          <button class="btn alt" id="markReturnedBtn" type="button">Returned</button>
+          <button class="btn danger" id="deleteOrderBtn" type="button">Delete</button>
+        </div>
+        <div id="detailBox" class="detail-grid" style="margin-top:12px">Select an order.</div>
+      </div>
+
+      <div class="panel">
+        <h2 id="locationTitle" style="margin:0 0 10px">Location</h2>
+        <div id="locationBox" class="empty">Location map appears here when the order has coordinates or a map link.</div>
+        <div class="actions">
+          <button class="btn alt" id="openMapBtn" type="button">Open map</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://rvfkmmrteeukkmvzhteo.supabase.co'.trim();
+const SUPABASE_ANON_KEY = 'sb_publishable_82Bpuhtcv4yMP8C6pwyyzw_zaLuaY9f'.trim();
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let orders=[], selected=null, seenIds=new Set(), initialLoaded=false, loadingOrders=false, loadTimer=null, lang='ar';
+const el=id=>document.getElementById(id);
+const money=v=>`${Number(v||0).toFixed(0)} MAD`;
+const fmt=v=>v?new Date(v).toLocaleString(): '-';
+const L={ar:{title:'طلبات مؤكدة مباشرة',subtitle:'تظهر الطلبات الجديدة تلقائياً',confirmed:'مؤكد',today:'اليوم',revenue:'الإيراد',session:'جديد في الجلسة',orders:'الطلبات',details:'تفاصيل الطلب',location:'الموقع',search:'ابحث بالاسم أو الهاتف أو المدينة أو رقم الطلب أو التتبع',all:'كل التواريخ',today2:'اليوم',week:'آخر 7 أيام',newest:'الأحدث',oldest:'الأقدم',high:'الأعلى',low:'الأقل',open:'فتح الخريطة',embed:'الخريطة المدمجة',arrived:'وصلت',returned:'رجعت',delete:'حذف',select:'اختر طلباً',noOrders:'لا توجد طلبات مؤكدة بعد',mapHere:'تظهر الخريطة هنا عندما يوجد عنوان أو إحداثيات',openMap:'فتح الخريطة',name:'الاسم',phone:'الهاتف',city:'المدينة',status:'الحالة',total:'الإجمالي',created:'التاريخ',orderNo:'رقم الطلب',tracking:'التتبع',ready:'جاهز.',loading:'جاري تحميل الطلبات...',loaded:n=>`${n} طلباً مؤكداً.`},fr:{title:'Commandes confirmées مباشرة',subtitle:'Les nouvelles commandes apparaissent automatiquement',confirmed:'Confirmée',today:'Aujourd’hui',revenue:'Revenu',session:'Nouvelles',orders:'Commandes',details:'Détails',location:'Localisation',search:'Rechercher par nom, téléphone, ville, numéro ou suivi',all:'Toutes les dates',today2:'Aujourd’hui',week:'7 derniers jours',newest:'Plus récentes',oldest:'Plus anciennes',high:'Total élevé',low:'Total faible',open:'Ouvrir la carte',embed:'Carte intégrée',arrived:'Arrivée',returned:'Retour',delete:'Supprimer',select:'Choisissez une commande',noOrders:'Aucune commande confirmée',mapHere:'La carte apparaît ici quand une adresse ou des coordonnées existent',openMap:'Ouvrir la carte',name:'Nom',phone:'Téléphone',city:'Ville',status:'Statut',total:'Total',created:'Date',orderNo:'N° commande',tracking:'Suivi',ready:'Prêt.',loading:'Chargement des commandes...',loaded:n=>`${n} commande(s) confirmée(s).`},en:{title:'Live confirmed orders',subtitle:'New orders appear automatically',confirmed:'Confirmed',today:'Today',revenue:'Revenue',session:'New in session',orders:'Orders',details:'Order details',location:'Location',search:'Search by name, phone, city, order no, or tracking no',all:'All dates',today2:'Today',week:'Last 7 days',newest:'Newest',oldest:'Oldest',high:'Highest total',low:'Lowest total',open:'Open map',embed:'Embed map',arrived:'Arrived',returned:'Returned',delete:'Delete',select:'Select an order',noOrders:'No confirmed orders yet',mapHere:'The map appears here when an address or coordinates exist',openMap:'Open map',name:'Name',phone:'Phone',city:'City',status:'Status',total:'Total',created:'Created',orderNo:'Order No',tracking:'Tracking',ready:'Ready.',loading:'Loading orders...',loaded:n=>`${n} confirmed order(s).`}};
+function t(k){ return typeof L[lang][k]==='function' ? L[lang][k] : L[lang][k]; }
+function setMsg(v){ el('msg').textContent=v }
+function applyLang(){ document.documentElement.lang=lang; document.documentElement.dir=lang==='ar'?'rtl':'ltr'; el('title').textContent=t('title'); el('subtitle').textContent=t('subtitle'); el('labelConfirmed').textContent=t('confirmed'); el('labelToday').textContent=t('today'); el('labelRevenue').textContent=t('revenue'); el('labelSession').textContent=t('session'); el('ordersTitle').textContent=t('orders'); el('detailsTitle').textContent=t('details'); el('locationTitle').textContent=t('location'); el('search').placeholder=t('search'); el('dateFilter').innerHTML=`<option value="all">${t('all')}</option><option value="today">${t('today2')}</option><option value="week">${t('week')}</option>`; el('sortFilter').innerHTML=`<option value="newest">${t('newest')}</option><option value="oldest">${t('oldest')}</option><option value="high">${t('high')}</option><option value="low">${t('low')}</option>`; el('mapMode').innerHTML=`<option value="open">${t('open')}</option><option value="embed">${t('embed')}</option>`; el('markArrivedBtn').textContent=t('arrived'); el('markReturnedBtn').textContent=t('returned'); el('deleteOrderBtn').textContent=t('delete'); el('openMapBtn').textContent=t('openMap'); document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang)); render(); }
+function todayStart(){ const d=new Date(); d.setHours(0,0,0,0); return d }
+function norm(s){ return (s||'').toString().trim().toLowerCase() }
+function mapQuery(o){ return [o.customer_name,o.customer_city].filter(Boolean).join(' ') }
+function mapUrl(o){ const lat=o.lat ?? o.latitude, lng=o.lng ?? o.longitude; if(o.map_url) return o.map_url; if(lat!=null && lng!=null){ return el('mapProvider').value==='osm' ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}` : `https://www.google.com/maps?q=${lat},${lng}`; } const q=mapQuery(o); if(!q) return ''; return el('mapProvider').value==='osm' ? `https://www.openstreetmap.org/search?query=${encodeURIComponent(q)}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`; }
+function filtered(){ const q=norm(el('search').value); const date=el('dateFilter').value; let list=[...orders]; if(date==='today') list=list.filter(o=>new Date(o.created_at)>=todayStart()); if(date==='week'){ const d=new Date(); d.setDate(d.getDate()-7); list=list.filter(o=>new Date(o.created_at)>=d); } if(q) list=list.filter(o=>[o.order_number,o.tracking_number,o.customer_name,o.customer_phone,o.customer_city,o.customer_note].map(norm).join(' ').includes(q)); const s=el('sortFilter').value; if(s==='newest') list.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)); if(s==='oldest') list.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)); if(s==='high') list.sort((a,b)=>Number(b.total||0)-Number(a.total||0)); if(s==='low') list.sort((a,b)=>Number(a.total||0)-Number(b.total||0)); return list; }
+function renderDetail(o){ if(!o){ el('detailBox').innerHTML=t('select'); el('locationBox').innerHTML=`<div class="empty">${t('mapHere')}</div>`; return; } const items=(o.items||[]).map(i=>`<div class="item"><span>${i.name} × ${i.qty}</span><strong>${money(i.total ?? (Number(i.unitPrice||0)*Number(i.qty||0)))}</strong></div>`).join(''); el('detailBox').innerHTML=`<div class="line"><span>${t('orderNo')}</span><strong>${o.order_number||'-'}</strong></div><div class="line"><span>${t('tracking')}</span><strong>${o.tracking_number||'-'}</strong></div><div class="line"><span>${t('name')}</span><strong>${o.customer_name||'-'}</strong></div><div class="line"><span>${t('phone')}</span><strong>${o.customer_phone||'-'}</strong></div><div class="line"><span>${t('city')}</span><strong>${o.customer_city||'-'}</strong></div><div class="line"><span>${t('status')}</span><strong>${o.status||'confirmed'}</strong></div><div class="line"><span>${t('total')}</span><strong>${money(o.total)}</strong></div><div class="line"><span>${t('created')}</span><strong>${fmt(o.created_at)}</strong></div><div class="items">${items||'<div class="empty">No items</div>'}</div>`; const url=mapUrl(o); if(url){ if(el('mapMode').value==='embed' && el('mapProvider').value==='osm' && o.lat!=null && o.lng!=null){ el('locationBox').innerHTML=`<iframe class="map" src="https://www.openstreetmap.org/export/embed.html?bbox=${o.lng-0.01}%2C${o.lat-0.01}%2C${o.lng+0.01}%2C${o.lat+0.01}&layer=mapnik&marker=${o.lat}%2C${o.lng}" loading="lazy"></iframe>`; } else if(el('mapMode').value==='embed' && el('mapProvider').value==='google'){ el('locationBox').innerHTML=`<div class="empty">Google embed needs a valid embed key. Use OpenStreetMap or Open map.</div>`; } else { el('locationBox').innerHTML=`<div class="empty"><a href="${url}" target="_blank" rel="noreferrer">${t('openMap')}</a></div>`; } } else { el('locationBox').innerHTML=`<div class="empty">${t('mapHere')}</div>`; } }
+function render(){ const list=filtered(); el('countAll').textContent=orders.length; el('countToday').textContent=orders.filter(o=>new Date(o.created_at)>=todayStart()).length; el('sumTotal').textContent=money(orders.reduce((s,o)=>s+Number(o.total||0),0)); el('countNew').textContent=seenIds.size; if(!list.length){ el('ordersList').innerHTML=`<div class="empty">${t('noOrders')}</div>`; if(!selected) renderDetail(null); return; } el('ordersList').innerHTML=list.map(o=>`<div class="order ${selected&&selected.id===o.id?'active':''}" onclick="selectOrder('${o.id}')"><div class="row"><strong>${o.order_number||'-'}</strong><span class="badge">${o.status||'confirmed'}</span></div><div class="row muted" style="margin-top:6px"><span>${o.customer_name||'-'}</span><span>${money(o.total)}</span></div><div class="row muted" style="margin-top:6px"><span>${o.customer_phone||'-'}</span><span>${fmt(o.created_at)}</span></div></div>`).join(''); if(!selected && list[0]) selected=list[0]; renderDetail(selected); }
+window.selectOrder=(id,scroll=true)=>{ selected=orders.find(o=>o.id===id)||null; render(); if(scroll&&selected) el('detailBox').scrollIntoView({behavior:'smooth',block:'start'}); };
+async function updateSelected(patch){ if(!selected) return; const { error } = await supabaseClient.from('orders').update(patch).eq('id', selected.id); if(error){ setMsg('Supabase error: '+error.message); return; } await loadOrders(true); }
+el('openMapBtn').addEventListener('click',()=>{ if(!selected) return; const url=mapUrl(selected); if(url) window.open(url,'_blank'); });
+el('search').addEventListener('input',()=>render()); el('dateFilter').addEventListener('change',()=>render()); el('sortFilter').addEventListener('change',()=>render()); el('mapMode').addEventListener('change',()=>render()); el('mapProvider').addEventListener('change',()=>render()); document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>{ lang=b.dataset.lang; applyLang(); }));
+el('markArrivedBtn').addEventListener('click',()=>updateSelected({status:'arrived'}));
+el('markReturnedBtn').addEventListener('click',()=>updateSelected({status:'returned'}));
+el('deleteOrderBtn').addEventListener('click',async()=>{ if(!selected) return; if(!confirm(lang==='ar'?'هل تريد حذف الطلب؟':lang==='fr'?'Supprimer cette commande ?':'Delete this order?')) return; const { error } = await supabaseClient.from('orders').delete().eq('id', selected.id); if(error){ setMsg('Supabase error: '+error.message); return; } selected=null; await loadOrders(true); });
+async function loadOrders(silent=true){ if(loadingOrders) return; loadingOrders=true; if(!silent) setMsg(t('loading')); const { data, error } = await supabaseClient.from('orders').select('*').eq('status','confirmed').order('created_at',{ascending:false}); loadingOrders=false; if(error){ setMsg('Supabase error: '+error.message); return; } orders=data||[]; const prev=selected?.id; if(prev) selected=orders.find(o=>o.id===prev)||orders[0]||null; else selected=orders[0]||null; if(!initialLoaded){ seenIds=new Set(orders.map(o=>o.id)); initialLoaded=true; } else { orders.forEach(o=>seenIds.add(o.id)); } setMsg(`${t('ready')} ${t('loaded')(orders.length)}`); render(); }
+function scheduleReload(){ clearTimeout(loadTimer); loadTimer=setTimeout(()=>loadOrders(true),350); }
+function liveSubscribe(){ const channel=supabaseClient.channel('confirmed-orders-live'); channel.on('postgres_changes',{event:'*',schema:'public',table:'orders'},payload=>{ const row=payload.new||payload.old; if(!row) return; const st=norm(row.status); if(st==='confirmed' || st==='arrived' || st==='returned'){ scheduleReload(); } }).subscribe(); }
+applyLang(); loadOrders(true); liveSubscribe();
+</script>
+</body>
+</html>
