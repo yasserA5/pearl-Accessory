@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Confirmation - Pearl Accessory</title>
+    <link rel="icon" type="image/jpeg" href="./logo.jpeg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+      :root {
+        --bg: #171311;
+        --surface: #221c18;
+        --surface-2: #2b241f;
+        --card: #f8f3ec;
+        --card-2: #fffaf4;
+        --text: #f6efe6;
+        --muted: #cbbca8;
+        --dark: #241d18;
+        --gold: #bb9050;
+        --gold-2: #d7b27a;
+        --line: rgba(255, 255, 255, 0.08);
+        --shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+        --r: 24px;
+        --r2: 16px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font-family: "Cairo", "Inter", sans-serif;
+        background: linear-gradient(180deg, #151210 0%, #211b17 100%);
+        color: var(--text);
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      .container {
+        width: min(1100px, calc(100% - 32px));
+        margin: auto;
+      }
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: rgba(18, 15, 13, 0.78);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--line);
+      }
+      .nav-inner {
+        display: flex;
+        gap: 20px;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 0;
+        flex-wrap: wrap;
+      }
+      .brand {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+      }
+      .logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: linear-gradient(180deg, var(--gold-2), #8e6835);
+        display: grid;
+        place-items: center;
+      }
+      .logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .brand h1 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+      .brand p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+      .lang {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .lang button,
+      .btn {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 16px;
+        cursor: pointer;
+      }
+      .lang button {
+        background: #302823;
+        color: #f8efe3;
+      }
+      .lang button.active {
+        background: var(--gold);
+        color: #20160f;
+      }
+      .btn {
+        background: var(--gold);
+        color: #1e140c;
+        font-weight: 700;
+      }
+      .btn.alt {
+        background: #2d2520;
+        color: #f8efe3;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .hero {
+        padding: 34px 0 20px;
+      }
+      .hero-card {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.02)
+        );
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        padding: 30px;
+        box-shadow: var(--shadow);
+      }
+      .eyebrow {
+        color: var(--gold-2);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+      }
+      .hero-card h2 {
+        margin: 12px 0 8px;
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2rem, 5vw, 3.4rem);
+        line-height: 1;
+        color: #fff6ea;
+      }
+      .hero-card p {
+        margin: 0;
+        color: #dbcdbd;
+        line-height: 1.8;
+        max-width: 60ch;
+      }
+      .section {
+        padding: 0 0 34px;
+      }
+      .confirmation-card {
+        background: var(--card);
+        color: var(--dark);
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: var(--shadow);
+      }
+      .confirmation-card h3 {
+        margin: 0 0 8px;
+        font-size: 1.8rem;
+        font-family: "Cormorant Garamond", serif;
+      }
+      .mini {
+        color: #6f6254;
+        line-height: 1.7;
+      }
+      .confirmation-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 18px;
+      }
+      .facture {
+        background: #fffaf4;
+        border: 1px solid #ead9c3;
+        border-radius: 22px;
+        padding: 20px;
+      }
+      .facture h4 {
+        margin: 0 0 12px;
+        font-size: 1.12rem;
+      }
+      .facture-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px dashed #e4d2ba;
+      }
+      .facture-line:last-child {
+        border-bottom: none;
+      }
+      .facture-items {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .facture-item {
+        background: #f7efe5;
+        border-radius: 16px;
+        padding: 12px;
+        line-height: 1.7;
+      }
+      .owner-box {
+        margin-top: 16px;
+        background: #f7efe5;
+        border-radius: 16px;
+        padding: 14px;
+        line-height: 1.8;
+      }
+      .qr-wrap {
+        margin-top: 16px;
+        display: grid;
+        justify-items: center;
+        gap: 10px;
+        padding: 14px;
+        background: #f7efe5;
+        border-radius: 16px;
+      }
+      .qr-box {
+        width: 140px;
+        height: 140px;
+        display: grid;
+        place-items: center;
+        background: #fff;
+        padding: 8px;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        margin-top: 22px;
+      }
+      .status {
+        display: none;
+        margin-top: 14px;
+        padding: 14px 16px;
+        border-radius: 16px;
+        line-height: 1.7;
+      }
+      .status.show {
+        display: block;
+      }
+      .status.error {
+        background: #fde8e8;
+        color: #8a2f2f;
+        border: 1px solid #efb3b3;
+      }
+      .status.success {
+        background: #e8f7ec;
+        color: #21643a;
+        border: 1px solid #a8dbb7;
+      }
+      .status.info {
+        background: #f3e6d7;
+        color: #4d3a24;
+        border: 1px solid #e2c7a4;
+      }
+      .btn.loading {
+        position: relative;
+        color: transparent !important;
+        pointer-events: none;
+      }
+      .btn.loading::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 18px;
+        height: 18px;
+        margin: -9px 0 0 -9px;
+        border: 3px solid rgba(255, 255, 255, 0.35);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media print {
+        body {
+          background: #fff;
+          color: #000;
+        }
+        .nav,
+        .hero,
+        .actions,
+        .lang,
+        .status {
+          display: none !important;
+        }
+        .section {
+          padding: 0;
+        }
+        .confirmation-card {
+          box-shadow: none;
+          border: none;
+          padding: 0;
+        }
+      }
+      @media (max-width: 780px) {
+        .confirmation-grid {
+          grid-template-columns: 1fr;
+        }
+        .confirmation-card {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="container nav-inner">
+        <div class="brand">
+          <div class="logo"><img src="./logo.jpeg" alt="Pearl logo" /></div>
+          <div>
+            <h1>Pearl Accessory</h1>
+            <p id="brandTag">Luxury accessories</p>
+          </div>
+        </div>
+        <div class="lang">
+          <button data-lang="ar" class="active">العربية</button
+          ><button data-lang="fr">Français</button
+          ><button data-lang="en">English</button>
+        </div>
+      </div>
+    </nav>
+    <header class="hero">
+      <div class="container">
+        <div class="hero-card">
+          <div class="eyebrow">PEARL • ACCESSORY</div>
+          <h2 id="pageTitle">تم تأكيد الطلب</h2>
+          <p id="pageText">
+            تم إنشاء طلبك بنجاح. احتفظ برقم الطلب ورقم التتبع من أجل المتابعة.
+          </p>
+        </div>
+      </div>
+    </header>
+    <section class="section">
+      <div class="container">
+        <div class="confirmation-card" id="factureToDownload">
+          <h3 id="confirmPageTitle">تم تأكيد الطلب</h3>
+          <p id="confirmPageText" class="mini">
+            تم إنشاء الطلب بنجاح. احتفظ بالمعلومات التالية.
+          </p>
+          <div class="confirmation-grid">
+            <div class="facture">
+              <h4 id="factureTitle">تفاصيل الطلب</h4>
+              <div class="facture-line">
+                <span id="labelOrderNo">رقم الطلب</span
+                ><strong id="viewOrderNo">-</strong>
+              </div>
+              <div class="facture-line">
+                <span id="labelTrackNo">رقم التتبع</span
+                ><strong id="viewTrackNo">-</strong>
+              </div>
+              <div class="facture-line">
+                <span id="labelDate">التاريخ</span
+                ><strong id="viewDate">-</strong>
+              </div>
+              <div class="facture-line">
+                <span id="labelName">الاسم</span
+                ><strong id="viewName">-</strong>
+              </div>
+              <div class="facture-line">
+                <span id="labelPhone">الهاتف</span
+                ><strong id="viewPhone">-</strong>
+              </div>
+              <div class="facture-line">
+                <span id="labelCity">المدينة</span
+                ><strong id="viewCity">-</strong>
+              </div>
+              <div class="facture-line">
+  <span id="labelAddress">Address</span>
+  <strong id="viewAddress">-</strong>
+</div>
+              <div class="facture-line">
+                <span id="labelNote">الملاحظة</span
+                ><strong id="viewNote">-</strong>
+              </div>
+              <div class="owner-box">
+                <strong id="ownerTitle">معلومات البائع</strong>
+                <div>
+                  <span id="ownerLabelName">الاسم:</span>
+                  <span id="ownerName">Pearl Accessory Store</span>
+                </div>
+                <div>
+                  <span id="ownerLabelPhone">الهاتف:</span>
+                  <span id="ownerPhone">+212600000000</span>
+                </div>
+                <div>
+                  <span id="ownerLabelCity">المدينة:</span>
+                  <span id="ownerCity">Nador</span>
+                </div>
+                <div>
+                  <span id="ownerLabelAddress">العنوان:</span>
+                  <span id="ownerAddress">Morocco</span>
+                </div>
+              </div>
+            </div>
+            <div class="facture">
+              <h4 id="factureSummaryTitle">الفاتورة</h4>
+              <div id="factureItems" class="facture-items"></div>
+              <div class="facture-line" style="margin-top: 14px">
+                <span id="labelSubtotal">المجموع الفرعي</span
+                ><strong id="viewSubtotal">-</strong>
+              </div>
+              <div class="facture-line">
+                <span id="labelShipping">التوصيل</span
+                ><strong id="viewShipping">-</strong>
+              </div>
+              <div class="facture-line">
+                <span id="labelTotal">الإجمالي</span
+                ><strong id="viewTotal">-</strong>
+              </div>
+              <div class="qr-wrap">
+                <div id="factureQr" class="qr-box"></div>
+                <small id="qrCaption">QR Code</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="statusBox" class="status info"></div>
+        <div class="actions">
+          <button class="btn alt" id="backBtn" type="button">
+            العودة إلى المتجر</button
+          ><button class="btn" id="printBtn" type="button">طباعة</button
+          ><button class="btn alt" id="downloadBuyerBtn" type="button">
+            تحميل فاتورة الزبون</button
+          ><button class="btn alt" id="downloadOwnerBtn" type="button">
+            تحميل فاتورة البائع
+          </button>
+        </div>
+      </div>
+    </section>
+    <script>
+      const SUPABASE_URL = "https://rvfkmmrteeukkmvzhteo.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ2ZmttbXJ0ZWV1a2ttdnpodGVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzODk0ODQsImV4cCI6MjA5Njk2NTQ4NH0.2mpNlbpRFExMtI8_iJVzARCd1qBx8lCQSuX-1MlzHI";
+      const OWNER_INFO = {
+        name: "Pearl Accessory Store",
+        phone: "+212600000000",
+        city: "Nador",
+        address: "Morocco",
+      };
+      const i18n = {
+        ar: {
+          dir: "rtl",
+          brandTag: "إكسسوارات راقية",
+          pageTitle: "تم تأكيد الطلب",
+          pageText:
+            "تم إنشاء طلبك بنجاح. احتفظ برقم الطلب ورقم التتبع من أجل المتابعة.",
+          confirmPageTitle: "تم تأكيد الطلب",
+          confirmPageText: "تم إنشاء الطلب بنجاح. احتفظ بالمعلومات التالية.",
+          factureTitle: "تفاصيل الطلب",
+          factureSummaryTitle: "الفاتورة",
+          orderNo: "رقم الطلب",
+          trackNo: "رقم التتبع",
+          date: "التاريخ",
+          name: "الاسم",
+          phone: "الهاتف",
+          city: "المدينة",
+          note: "الملاحظة",
+          subtotal: "المجموع الفرعي",
+          shipping: "التوصيل",
+          total: "الإجمالي",
+          ownerTitle: "معلومات البائع",
+          ownerLabelName: "الاسم:",
+          ownerLabelPhone: "الهاتف:",
+          ownerLabelCity: "المدينة:",
+          ownerLabelAddress: "العنوان:",
+          back: "العودة إلى المتجر",
+          print: "طباعة",
+          downloadBuyer: "تحميل فاتورة الزبون",
+          downloadOwner: "تحميل فاتورة البائع",
+          qty: "الكمية",
+          unit: "السعر",
+          qr: "رمز QR",
+          missing: "تعذر العثور على بيانات الطلب.",
+          loading: "جاري تحميل الطلب...",
+          fetchError: "حدث خطأ أثناء تحميل بيانات الطلب.",
+        },
+        fr: {
+          dir: "ltr",
+          brandTag: "Accessoires élégants",
+          pageTitle: "Commande confirmée",
+          pageText:
+            "Votre commande a été créée avec succès. Conservez le numéro de commande et le numéro de suivi.",
+          confirmPageTitle: "Commande confirmée",
+          confirmPageText:
+            "Votre commande a été créée avec succès. Conservez les informations suivantes.",
+          factureTitle: "Détails de la commande",
+          factureSummaryTitle: "Facture",
+          orderNo: "N° de commande",
+          trackNo: "N° de suivi",
+          date: "Date",
+          name: "Nom",
+          phone: "Téléphone",
+          city: "Ville",
+          note: "Note",
+          subtotal: "Sous-total",
+          shipping: "Livraison",
+          total: "Total",
+          ownerTitle: "Informations du vendeur",
+          ownerLabelName: "Nom :",
+          ownerLabelPhone: "Téléphone :",
+          ownerLabelCity: "Ville :",
+          ownerLabelAddress: "Adresse :",
+          back: "Retour à la boutique",
+          print: "Imprimer",
+          downloadBuyer: "Télécharger facture client",
+          downloadOwner: "Télécharger facture vendeur",
+          qty: "Qté",
+          unit: "Prix",
+          qr: "Code QR",
+          missing: "Données de commande introuvables.",
+          loading: "Chargement de la commande...",
+          fetchError: "Erreur lors du chargement de la commande.",
+        },
+        en: {
+          dir: "ltr",
+          brandTag: "Elegant accessories",
+          pageTitle: "Your order is confirmed",
+          pageText:
+            "Your order has been created successfully. Keep the order number and tracking number.",
+          confirmPageTitle: "Order confirmed",
+          confirmPageText:
+            "Your order has been created successfully. Keep the following information.",
+          factureTitle: "Order details",
+          factureSummaryTitle: "Invoice",
+          orderNo: "Order No",
+          trackNo: "Tracking No",
+          date: "Date",
+          name: "Name",
+          phone: "Phone",
+          city: "City",
+          note: "Note",
+          subtotal: "Subtotal",
+          shipping: "Shipping",
+          total: "Total",
+          ownerTitle: "Seller information",
+          ownerLabelName: "Name:",
+          ownerLabelPhone: "Phone:",
+          ownerLabelCity: "City:",
+          ownerLabelAddress: "Address:",
+          back: "Back to store",
+          print: "Print",
+          downloadBuyer: "Download buyer invoice",
+          downloadOwner: "Download owner invoice",
+          qty: "Qty",
+          unit: "Price",
+          qr: "QR Code",
+          missing: "Order data was not found.",
+          loading: "Loading order...",
+          fetchError: "An error occurred while loading the order.",
+        },
+      };
+      let currentLang = "ar",
+        currentOrder = null;
+      const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+      );
+      const els = {
+        brandTag: document.getElementById("brandTag"),
+        pageTitle: document.getElementById("pageTitle"),
+        pageText: document.getElementById("pageText"),
+        confirmPageTitle: document.getElementById("confirmPageTitle"),
+        confirmPageText: document.getElementById("confirmPageText"),
+        factureTitle: document.getElementById("factureTitle"),
+        factureSummaryTitle: document.getElementById("factureSummaryTitle"),
+        labelOrderNo: document.getElementById("labelOrderNo"),
+        labelTrackNo: document.getElementById("labelTrackNo"),
+        labelDate: document.getElementById("labelDate"),
+        labelName: document.getElementById("labelName"),
+        labelPhone: document.getElementById("labelPhone"),
+        labelCity: document.getElementById("labelCity"),
+        labelNote: document.getElementById("labelNote"),
+        labelSubtotal: document.getElementById("labelSubtotal"),
+        labelShipping: document.getElementById("labelShipping"),
+        labelTotal: document.getElementById("labelTotal"),
+        ownerTitle: document.getElementById("ownerTitle"),
+        ownerLabelName: document.getElementById("ownerLabelName"),
+        ownerLabelPhone: document.getElementById("ownerLabelPhone"),
+        ownerLabelCity: document.getElementById("ownerLabelCity"),
+        ownerLabelAddress: document.getElementById("ownerLabelAddress"),
+        ownerName: document.getElementById("ownerName"),
+        ownerPhone: document.getElementById("ownerPhone"),
+        ownerCity: document.getElementById("ownerCity"),
+        ownerAddress: document.getElementById("ownerAddress"),
+        qrCaption: document.getElementById("qrCaption"),
+        viewOrderNo: document.getElementById("viewOrderNo"),
+        viewTrackNo: document.getElementById("viewTrackNo"),
+        viewDate: document.getElementById("viewDate"),
+        viewName: document.getElementById("viewName"),
+        viewPhone: document.getElementById("viewPhone"),
+        viewCity: document.getElementById("viewCity"),
+        viewNote: document.getElementById("viewNote"),
+        viewSubtotal: document.getElementById("viewSubtotal"),
+        viewShipping: document.getElementById("viewShipping"),
+        viewTotal: document.getElementById("viewTotal"),
+        factureItems: document.getElementById("factureItems"),
+        factureQr: document.getElementById("factureQr"),
+        statusBox: document.getElementById("statusBox"),
+        backBtn: document.getElementById("backBtn"),
+        printBtn: document.getElementById("printBtn"),
+        downloadBuyerBtn: document.getElementById("downloadBuyerBtn"),
+        downloadOwnerBtn: document.getElementById("downloadOwnerBtn"),
+        factureToDownload: document.getElementById("factureToDownload"),
+      };
+      function t(k) {
+        return i18n[currentLang][k] || k;
+      }
+      function money(v) {
+        return `${Number(v || 0).toFixed(0)} MAD`;
+      }
+      function setLoading(button, isLoading) {
+        if (!button) return;
+        button.classList.toggle("loading", isLoading);
+        button.disabled = isLoading;
+      }
+      function showStatus(type, text) {
+        els.statusBox.className = `status ${type} show`;
+        els.statusBox.textContent = text;
+      }
+      function hideStatus() {
+        els.statusBox.className = "status info";
+        els.statusBox.textContent = "";
+      }
+      function applyLanguage() {
+        document.documentElement.lang = currentLang;
+        document.documentElement.dir = i18n[currentLang].dir;
+        els.brandTag.textContent = t("brandTag");
+        els.pageTitle.textContent = t("pageTitle");
+        els.pageText.textContent = t("pageText");
+        els.confirmPageTitle.textContent = t("confirmPageTitle");
+        els.confirmPageText.textContent = t("confirmPageText");
+        els.factureTitle.textContent = t("factureTitle");
+        els.factureSummaryTitle.textContent = t("factureSummaryTitle");
+        els.labelOrderNo.textContent = t("orderNo");
+        els.labelTrackNo.textContent = t("trackNo");
+        els.labelDate.textContent = t("date");
+        els.labelName.textContent = t("name");
+        els.labelPhone.textContent = t("phone");
+        els.labelCity.textContent = t("city");
+        document.getElementById('labelAddress').textContent = t('address');
+        els.labelNote.textContent = t("note");
+        els.labelSubtotal.textContent = t("subtotal");
+        els.labelShipping.textContent = t("shipping");
+        els.labelTotal.textContent = t("total");
+        els.ownerTitle.textContent = t("ownerTitle");
+        els.ownerLabelName.textContent = t("ownerLabelName");
+        els.ownerLabelPhone.textContent = t("ownerLabelPhone");
+        els.ownerLabelCity.textContent = t("ownerLabelCity");
+        els.ownerLabelAddress.textContent = t("ownerLabelAddress");
+        els.qrCaption.textContent = t("qr");
+        els.backBtn.textContent = t("back");
+        els.printBtn.textContent = t("print");
+        els.downloadBuyerBtn.textContent = t("downloadBuyer");
+        els.downloadOwnerBtn.textContent = t("downloadOwner");
+      }
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+      function normalizeOrder(data) {
+        if (!data) return null;
+        return {
+          orderNumber: data.orderNumber || data.order_number || "-",
+          trackingNumber: data.trackingNumber || data.tracking_number || "-",
+          createdAt:
+            data.createdAt ||
+            (data.created_at
+              ? new Date(data.created_at).toLocaleString()
+              : "-"),
+          customerName: data.customerName || data.customer_name || "-",
+          customerPhone: data.customerPhone || data.customer_phone || "-",
+          customerCity: data.customerCity || data.customer_city || "-",
+          customerNote: data.customerNote || data.customer_note || "-",
+          items: Array.isArray(data.items) ? data.items : [],
+          subtotal: Number(data.subtotal || 0),
+          shipping: Number(data.shipping || 0),
+          total: Number(data.total || 0),
+        };
+      }
+      function buildQrText(order) {
+        return JSON.stringify({
+          order_number: order.orderNumber,
+          tracking_number: order.trackingNumber,
+          customer_name: order.customerName,
+          customer_phone: order.customerPhone,
+          customer_city: order.customerCity,
+          total: order.total,
+          created_at: order.createdAt,
+        });
+      }
+      function renderFactureQR(order) {
+        const qrBox = document.getElementById("factureQr");
+        if (!qrBox) return;
+        qrBox.innerHTML = "";
+        new QRCode(qrBox, {
+          text: buildQrText(order),
+          width: 120,
+          height: 120,
+          colorDark: "#111111",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H,
+        });
+      }
+      function fillPage(order) {
+        currentOrder = order;
+        els.ownerName.textContent = OWNER_INFO.name;
+        els.ownerPhone.textContent = OWNER_INFO.phone;
+        els.ownerCity.textContent = OWNER_INFO.city;
+        els.ownerAddress.textContent = OWNER_INFO.address;
+        els.viewOrderNo.textContent = order.orderNumber || "-";
+        els.viewTrackNo.textContent = order.trackingNumber || "-";
+        els.viewDate.textContent = order.createdAt || "-";
+        els.viewName.textContent = order.customerName || "-";
+        els.viewPhone.textContent = order.customerPhone || "-";
+        els.viewCity.textContent = order.customerCity || "-";
+        document.getElementById('viewAddress').textContent = order.customerAddress;
+        els.viewNote.textContent = order.customerNote || "-";
+        els.viewSubtotal.textContent = money(order.subtotal);
+        els.viewShipping.textContent = money(order.shipping);
+        els.viewTotal.textContent = money(order.total);
+        els.factureItems.innerHTML = (order.items || [])
+          .map((it, i) => {
+            const itemName = it.name || it.productName || `Item ${i + 1}`;
+            const qty = Number(it.qty || 1);
+            const unitPrice = Number(it.unitPrice || it.price || 0);
+            const itemTotal = Number(it.total || unitPrice * qty);
+            return `<div class="facture-item"><strong>${escapeHtml(itemName)}</strong><br><span>${t("qty")}: ${qty}</span><br><span>${t("unit")}: ${money(unitPrice)}</span><br><strong>${money(itemTotal)}</strong></div>`;
+          })
+          .join("");
+        renderFactureQR(order);
+      }
+      async function getOrderData() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("order")) {
+          try {
+            return normalizeOrder(
+              JSON.parse(decodeURIComponent(params.get("order"))),
+            );
+          } catch (error) {
+            console.error("Invalid order JSON:", error);
+          }
+        }
+        if (params.has("id")) {
+          const id = params.get("id");
+          const { data, error } = await supabaseClient
+            .from("orders")
+            .select("*")
+            .eq("order_number", id)
+            .single();
+          if (error) throw error;
+          return normalizeOrder(data);
+        }
+        return null;
+      }
+      async function downloadFacturePDF(mode) {
+        if (!currentOrder) return;
+        const clone = els.factureToDownload.cloneNode(true);
+        const title = clone.querySelector("#confirmPageTitle");
+        const text = clone.querySelector("#confirmPageText");
+        const ownerBox = clone.querySelector(".owner-box");
+        if (mode === "buyer") {
+          if (title) title.textContent = t("downloadBuyer");
+          if (text) text.textContent = t("confirmPageText");
+        } else {
+          if (title) title.textContent = t("downloadOwner");
+          if (text)
+            text.textContent = `${t("ownerTitle")} - ${OWNER_INFO.name}`;
+        }
+        if (mode === "buyer" && ownerBox) ownerBox.style.display = "block";
+        const opt = {
+          margin: 10,
+          filename: `${currentOrder.orderNumber}-${mode}.pdf`,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        };
+        await html2pdf().set(opt).from(clone).save();
+      }
+      document.querySelectorAll(".lang button").forEach((btn) =>
+        btn.addEventListener("click", () => {
+          currentLang = btn.dataset.lang;
+          applyLanguage();
+          if (currentOrder) fillPage(currentOrder);
+        }),
+      );
+      els.backBtn.addEventListener(
+        "click",
+        () => (window.location.href = "./index.html"),
+      );
+      els.printBtn.addEventListener("click", () => window.print());
+      els.downloadBuyerBtn.addEventListener("click", async () => {
+        setLoading(els.downloadBuyerBtn, true);
+        try {
+          await downloadFacturePDF("buyer");
+        } catch (error) {
+          console.error(error);
+          showStatus("error", error.message || "Download error");
+        } finally {
+          setLoading(els.downloadBuyerBtn, false);
+        }
+      });
+      els.downloadOwnerBtn.addEventListener("click", async () => {
+        setLoading(els.downloadOwnerBtn, true);
+        try {
+          await downloadFacturePDF("owner");
+        } catch (error) {
+          console.error(error);
+          showStatus("error", error.message || "Download error");
+        } finally {
+          setLoading(els.downloadOwnerBtn, false);
+        }
+      });
+      async function init() {
+        applyLanguage();
+        showStatus("info", t("loading"));
+        try {
+          const order = await getOrderData();
+          if (!order) {
+            showStatus("error", t("missing"));
+            return;
+          }
+          hideStatus();
+          fillPage(order);
+        } catch (error) {
+          console.error(error);
+          showStatus("error", t("fetchError"));
+        }
+      }
+      init();
+    </script>
+  </body>
+</html>

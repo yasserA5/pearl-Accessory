@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   
   <style>
     :root{
@@ -110,12 +112,205 @@
     .facture-line:last-child{border-bottom:none}
     .facture-items{display:grid;gap:10px;margin-top:14px}
     .facture-item{background:#f7efe5;border-radius:16px;padding:12px}
-    .hide-main{display:none !important}
-    @media (max-width:980px){.hero-grid,.cart-wrap,.policy-grid,.faq-grid,.grid,.toolbar,.confirmation-grid{grid-template-columns:1fr 1fr}.nav-inner{flex-wrap:wrap}}
-    @media (max-width:700px){.hero-grid,.cart-wrap,.policy-grid,.faq-grid,.grid,.toolbar,.confirmation-grid{grid-template-columns:1fr}.nav-links{overflow:auto}.hero-copy,.panel,.confirmation-card{padding:20px}.hero-visual{min-height:300px}}
+.hide-main{display:none !important}
+
+.btn.loading,.icon-btn.loading{
+  position:relative;
+  color:transparent !important;
+  pointer-events:none;
+}
+.btn.loading::after,.icon-btn.loading::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:18px;
+  height:18px;
+  margin:-9px 0 0 -9px;
+  border:3px solid rgba(255,255,255,.35);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.qr-wrap{
+  margin-top:16px;
+  display:grid;
+  justify-items:center;
+  gap:10px;
+  padding:14px;
+  background:#f7efe5;
+  border-radius:16px;
+}
+.qr-box{
+  width:140px;
+  height:140px;
+  display:grid;
+  place-items:center;
+  background:#fff;
+  padding:8px;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+@media (max-width:980px){
+  .hero-grid,.cart-wrap,.policy-grid,.faq-grid,.grid,.toolbar,.confirmation-grid{grid-template-columns:1fr 1fr}
+  .nav-inner{flex-wrap:wrap}
+}
+
+@media (max-width:700px){
+  .hero-grid,.cart-wrap,.policy-grid,.faq-grid,.toolbar,.confirmation-grid{grid-template-columns:1fr}
+  .nav-links{overflow:auto}
+  .hero-copy,.panel,.confirmation-card{padding:20px}
+  .hero-visual{min-height:300px}
+
+  #productsGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:10px;
+  }
+
+  .card{border-radius:18px}
+  .card-body{padding:12px}
+  .chip{font-size:.68rem;padding:5px 8px;margin-bottom:8px}
+  .title-row{flex-direction:column;gap:4px}
+  .title-row h4{font-size:.92rem;line-height:1.3}
+  .price{font-size:.9rem}
+  .meta{font-size:.74rem;gap:6px;margin:8px 0}
+  .desc{font-size:.78rem;line-height:1.45;min-height:34px}
+  .card-actions .btn{width:100%;padding:10px 8px;font-size:.8rem}
+
+  .nav-inner{gap:10px;padding:10px 0;align-items:center}
+  .brand{gap:10px}
+  .logo{width:36px;height:36px}
+  .brand h1{font-size:.92rem}
+  .brand p{font-size:.72rem}
+  .nav-links{
+    order:3;
+    width:100%;
+    overflow-x:auto;
+    white-space:nowrap;
+    flex-wrap:nowrap;
+    gap:8px;
+    padding-bottom:4px;
+    scrollbar-width:none;
+  }
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-links a{
+    font-size:.82rem;
+    padding:7px 10px;
+    background:rgba(255,255,255,.05);
+    border-radius:999px;
+  }
+  .lang button{padding:8px 10px;font-size:.8rem}
+}
+  
+    .btn.loading,.icon-btn.loading{position:relative;color:transparent !important;pointer-events:none}
+    .btn.loading::after,.icon-btn.loading::after{content:"";position:absolute;top:50%;left:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .qr-wrap{margin-top:16px;display:grid;justify-items:center;gap:10px;padding:14px;background:#f7efe5;border-radius:16px}
+    .qr-box{width:140px;height:140px;display:grid;place-items:center;background:#fff;padding:8px;border-radius:12px;overflow:hidden}
+    @media (max-width:700px){
+      .nav-inner{gap:10px;padding:10px 0;align-items:center}
+      .brand{gap:10px}
+      .logo{width:36px;height:36px}
+      .brand h1{font-size:.92rem}
+      .brand p{font-size:.72rem}
+      .nav-links{order:3;width:100%;overflow-x:auto;white-space:nowrap;flex-wrap:nowrap;gap:8px;padding-bottom:4px;scrollbar-width:none}
+      .nav-links::-webkit-scrollbar{display:none}
+      .nav-links a{font-size:.82rem;padding:7px 10px;background:rgba(255,255,255,.05);border-radius:999px}
+      .lang button{padding:8px 10px;font-size:.8rem}
+      #productsGrid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:10px}
+      .card{border-radius:18px}
+      .card-body{padding:12px}
+      .chip{font-size:.68rem;padding:5px 8px;margin-bottom:8px}
+      .title-row{flex-direction:column;gap:4px}
+      .title-row h4{font-size:.92rem;line-height:1.3}
+      .price{font-size:.9rem}
+      .meta{font-size:.74rem;gap:6px;margin:8px 0}
+      .desc{font-size:.78rem;line-height:1.45;min-height:34px}
+      .card-actions .btn{width:100%;padding:10px 8px;font-size:.8rem}
+      .hero-copy,.panel,.confirmation-card{padding:20px}
+      .hero-visual{min-height:300px}
+      .cart-item{grid-template-columns:62px 1fr}
+      .cart-item > div:last-child{grid-column:1 / -1;justify-items:start !important}
+      .cart-item img{width:62px;height:62px}
+    }
+    .btn.loading,.icon-btn.loading{
+  position:relative;
+  color:transparent !important;
+  pointer-events:none;
+}
+.btn.loading::after,.icon-btn.loading::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:18px;
+  height:18px;
+  margin:-9px 0 0 -9px;
+  border:3px solid rgba(255,255,255,.35);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+#toast{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:#28a745;
+  color:#fff;
+  padding:12px 20px;
+  border-radius:10px;
+  z-index:99999;
+  display:none;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
+
+#toast.show{
+  display:block;
+}
+.product-card{
+  position:relative;
+}
+
+.free-shipping-badge{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:#28a745;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  z-index:2;
+}
+.card{
+  position:relative;
+}
+
+.free-shipping-badge{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:#28a745;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  z-index:10;
+}
   </style>
 </head>
 <body>
+  <div id="toast">✅ Product added to cart</div>
   <div id="mainSite">
     <nav class="nav">
       <div class="container nav-inner">
@@ -213,6 +408,7 @@
             <input class="field" id="customerName" placeholder="الاسم الكامل">
             <input class="field" id="customerPhone" placeholder="الهاتف">
             <input class="field" id="customerCity" placeholder="المدينة">
+            <input class="field" id="customerAddress" placeholder="العنوان الكامل">
             <textarea class="field" id="customerNote" rows="4" placeholder="ملاحظة الطلب"></textarea>
 
             <button class="btn" id="placeOrderBtn" type="button">Place order</button>
@@ -272,8 +468,8 @@
 
   <section id="confirmationPage" class="confirmation-page">
     <div class="container">
-      <div class="confirmation-card">
-        <h3 id="confirmPageTitle">Your order is confirmed</h3>
+<div class="confirmation-card" id="factureToDownload">
+          <h3 id="confirmPageTitle">Your order is confirmed</h3>
         <p id="confirmPageText" class="mini">Your order has been created successfully. Keep the order number for tracking.</p>
 
         <div class="confirmation-grid">
@@ -288,13 +484,17 @@
           </div>
 
           <div class="facture">
-            <h4 id="factureSummaryTitle">Facture</h4>
-            <div id="factureItems" class="facture-items"></div>
-            <div class="facture-line"><span id="labelSubtotal">Subtotal</span><strong id="viewSubtotal">-</strong></div>
-            <div class="facture-line"><span id="labelShipping">Shipping</span><strong id="viewShipping">-</strong></div>
-            <div class="facture-line"><span id="labelTotal">Total</span><strong id="viewTotal">-</strong></div>
-          </div>
-        </div>
+  <h4 id="factureSummaryTitle">Facture</h4>
+  <div id="factureItems" class="facture-items"></div>
+  <div class="facture-line"><span id="labelSubtotal">Subtotal</span><strong id="viewSubtotal">-</strong></div>
+  <div class="facture-line"><span id="labelShipping">Shipping</span><strong id="viewShipping">-</strong></div>
+  <div class="facture-line"><span id="labelTotal">Total</span><strong id="viewTotal">-</strong></div>
+
+  <div class="qr-wrap">
+    <div id="factureQr" class="qr-box"></div>
+    <small id="qrCaption">QR Code</small>
+  </div>
+</div>
 
         <div class="confirm-actions" style="margin-top:22px">
           <button class="btn alt" id="backToStoreBtn" type="button">Back to store</button>
@@ -327,74 +527,315 @@ const supabaseClient = supabase.createClient(
 );
 
 const i18n = {
-  ar:{
-    dir:'rtl',brandTag:'إكسسوارات ومجوهرات أنيقة',navShop:'المتجر',navCart:'السلة',navPolicies:'السياسات',navFaq:'الأسئلة',
-    eyebrow:'PEARL • ACCESSORY',heroTitle:'إكسسوارات أنيقة تكمّل إطلالتك بكل نعومة',heroText:'اكتشفي قطعًا مختارة بعناية بتفاصيل راقية ولمسة أنثوية، واطلبي بسهولة في خطوات بسيطة.',
-    heroBtn1:'تسوقي الآن',heroBtn2:'شاهدي السلة',heroBadge:'تصاميم مميزة · جودة راقية · توصيل سريع',
-    shopTitle:'المنتجات',shopText:'اختاري القطع التي تعجبك وأضيفيها إلى السلة لإتمام طلبك بسهولة.',
-    cartTitle:'السلة',cartText:'راجعي المنتجات المختارة ثم أكملي معلوماتك لإرسال الطلب.',
-    subtotal:'المجموع',shipping:'الشحن',grandTotal:'الإجمالي',
-    checkoutTitle:'إتمام الطلب',checkoutText:'املئي معلوماتك، أنشئي الطلب، ثم أكّديه لإرساله.',
-    policyTitle:'السياسات',policyText:'كل ما تحتاجينه قبل تأكيد الطلب.',
-    p1t:'الشحن',p1d:'الشحن ثابت 35 MAD ويُضاف تلقائيًا إلى السلة.',
-    p2t:'التأكيد',p2d:'بعد إرسال الطلب، يتم تأكيد التوفر والتوصيل عبر الرسائل.',
-    p3t:'الاستبدال',p3d:'يمكنك تعديل هذا النص حسب سياسة المتجر.',
-    faqTitle:'الأسئلة الشائعة',faqText:'إجابات سريعة لمساعدتك قبل الطلب.',
-    f1q:'كيف أطلب؟',f1a:'أضيفي المنتجات إلى السلة ثم أنشئي الطلب وارسليه بعد التأكيد.',
-    f2q:'هل المنتجات المتوفرة تظهر هنا مباشرة؟',f2a:'نعم، كل منتج متوفر يظهر تلقائيًا في المتجر.',
-    f3q:'كيف يتم تأكيد الطلب؟',f3a:'بعد التأكيد ستظهر لك صفحة تؤكد نجاح الطلب مع الفاتورة.',
-    search:'ابحثي عن منتج...',allCats:'كل الفئات',empty:'لا توجد منتجات الآن.',add:'أضف للسلة',remove:'حذف',available:'متوفر',soldout:'نفد',
-    msgAddProduct:'أضيفي منتجًا أولًا.',msgFillFields:'يرجى ملء الاسم والهاتف والمدينة.',msgOrderReady:'تم إنشاء الطلب. يمكنك الآن مراجعته ثم تأكيده.',msgOrderChanged:'تم تعديل السلة، أعيدي إنشاء الطلب.',msgConfirmed:'تم تأكيد الطلب بنجاح.',
-    placeOrder:'إنشاء الطلب',confirmOrder:'تأكيد الطلب',confirmQuestionTitle:'تأكيد الطلب',confirmQuestionText:'سيتم الآن تأكيد هذا الطلب وإنشاء الفاتورة النهائية. تأكدي من صحة المعلومات قبل المتابعة.',cancel:'إلغاء',yesConfirm:'نعم، تأكيد الطلب',
-    confirmedTitle:'تم تأكيد طلبك',confirmedText:'تم إنشاء طلبك بنجاح. احتفظي برقم الطلب للتتبع.',orderDetails:'تفاصيل الطلب',facture:'الفاتورة',backStore:'العودة للمتجر',printFacture:'طباعة الفاتورة',
-    orderNo:'رقم الطلب',trackNo:'رقم التتبع',date:'التاريخ',name:'الاسم',phone:'الهاتف',city:'المدينة',note:'ملاحظة'
+  ar: {
+    dir: 'rtl',
+    brandTag: 'إكسسوارات ومجوهرات أنيقة',
+
+    navShop: 'المتجر',
+    navCart: 'السلة',
+    navPolicies: 'السياسات',
+    navFaq: 'الأسئلة',
+
+    eyebrow: 'PEARL • ACCESSORY',
+    heroTitle: 'إكسسوارات أنيقة تكمّل إطلالتك بكل نعومة',
+    heroText: 'اكتشفي قطعًا مختارة بعناية بتفاصيل راقية ولمسة أنثوية، واطلبي بسهولة في خطوات بسيطة.',
+    heroBtn1: 'تسوقي الآن',
+    heroBtn2: 'شاهدي السلة',
+    heroBadge: 'تصاميم مميزة · جودة راقية · توصيل سريع',
+
+    shopTitle: 'المنتجات',
+    shopText: 'اختاري القطع التي تعجبك وأضيفيها إلى السلة لإتمام طلبك بسهولة.',
+
+    cartTitle: 'السلة',
+    cartText: 'راجعي المنتجات المختارة ثم أكملي معلوماتك لإرسال الطلب.',
+
+    subtotal: 'المجموع',
+    shipping: 'الشحن',
+    grandTotal: 'الإجمالي',
+
+    checkoutTitle: 'إتمام الطلب',
+    checkoutText: 'املئي معلوماتك، أنشئي الطلب، ثم أكّديه لإرساله.',
+
+    policyTitle: 'السياسات',
+    policyText: 'كل ما تحتاجينه قبل تأكيد الطلب.',
+
+    p1t: 'الشحن',
+    p1d: 'الشحن ثابت 35 MAD ويُضاف تلقائيًا إلى السلة.',
+
+    p2t: 'التأكيد',
+    p2d: 'بعد إرسال الطلب، يتم تأكيد التوفر والتوصيل عبر الرسائل.',
+
+    p3t: 'الاستبدال',
+    p3d: 'يمكنك تعديل هذا النص حسب سياسة المتجر.',
+
+    faqTitle: 'الأسئلة الشائعة',
+    faqText: 'إجابات سريعة لمساعدتك قبل الطلب.',
+
+    f1q: 'كيف أطلب؟',
+    f1a: 'أضيفي المنتجات إلى السلة ثم أنشئي الطلب وارسليه بعد التأكيد.',
+
+    f2q: 'هل المنتجات المتوفرة تظهر هنا مباشرة؟',
+    f2a: 'نعم، كل منتج متوفر يظهر تلقائيًا في المتجر.',
+
+    f3q: 'كيف يتم تأكيد الطلب؟',
+    f3a: 'بعد التأكيد ستظهر لك صفحة تؤكد نجاح الطلب مع الفاتورة.',
+
+    search: 'ابحثي عن منتج...',
+    allCats: 'كل الفئات',
+
+    empty: 'لا توجد منتجات الآن.',
+    add: 'أضف للسلة',
+    remove: 'حذف',
+
+    available: 'متوفر',
+    soldout: 'نفد',
+
+    msgAddProduct: 'أضيفي منتجًا أولًا.',
+    msgFillFields: 'يرجى ملء الاسم والهاتف والمدينة.',
+    msgOrderReady: 'تم إنشاء الطلب. يمكنك الآن مراجعته ثم تأكيده.',
+    msgOrderChanged: 'تم تعديل السلة، أعيدي إنشاء الطلب.',
+    msgConfirmed: 'تم تأكيد الطلب بنجاح.',
+    msgAdded: '✅ تمت إضافة المنتج إلى السلة بنجاح',
+
+    placeOrder: 'إنشاء الطلب',
+    confirmOrder: 'تأكيد الطلب',
+
+    confirmQuestionTitle: 'تأكيد الطلب',
+    confirmQuestionText: 'سيتم الآن تأكيد هذا الطلب وإنشاء الفاتورة النهائية. تأكدي من صحة المعلومات قبل المتابعة.',
+
+    cancel: 'إلغاء',
+    yesConfirm: 'نعم، تأكيد الطلب',
+
+    confirmedTitle: 'تم تأكيد طلبك',
+    confirmedText: 'تم إنشاء طلبك بنجاح. احتفظي برقم الطلب للتتبع.',
+
+    orderDetails: 'تفاصيل الطلب',
+    facture: 'الفاتورة',
+
+    backStore: 'العودة للمتجر',
+    printFacture: 'طباعة الفاتورة',
+
+    orderNo: 'رقم الطلب',
+    trackNo: 'رقم التتبع',
+    date: 'التاريخ',
+    name: 'الاسم',
+    phone: 'الهاتف',
+    city: 'المدينة',
+    address: 'العنوان',
+    note: 'ملاحظة',
+
+    qrCaption: 'رمز QR',
+    freeShipping: '🚚 شحن مجاني',
+    cartEmpty: 'السلة فارغة الآن.',
+    qty: 'الكمية'
   },
-  fr:{
-    dir:'ltr',brandTag:'Accessoires et bijoux élégants',navShop:'Boutique',navCart:'Panier',navPolicies:'Politiques',navFaq:'FAQ',
-    eyebrow:'PEARL • ACCESSORY',heroTitle:'Des accessoires élégants pour sublimer votre style',heroText:'Découvrez des pièces choisies avec soin et passez votre commande facilement en quelques étapes.',
-    heroBtn1:'Acheter',heroBtn2:'Voir le panier',heroBadge:'Design raffiné · Belle qualité · Livraison rapide',
-    shopTitle:'Produits',shopText:'Choisissez vos articles préférés et ajoutez-les au panier facilement.',
-    cartTitle:'Panier',cartText:'Vérifiez votre sélection puis complétez vos informations.',
-    subtotal:'Sous-total',shipping:'Livraison',grandTotal:'Total',
-    checkoutTitle:'Finaliser la commande',checkoutText:'Remplissez vos informations, créez la commande, puis confirmez-la.',
-    policyTitle:'Politiques',policyText:'Tout ce qu’il faut savoir avant de confirmer.',
-    p1t:'Livraison',p1d:'La livraison est fixe à 35 MAD et s’ajoute automatiquement.',
-    p2t:'Confirmation',p2d:'Après l’envoi, la disponibilité et la livraison sont confirmées par message.',
-    p3t:'Échange',p3d:'Vous pouvez modifier ce texte selon votre politique.',
-    faqTitle:'Questions fréquentes',faqText:'Des réponses rapides avant la commande.',
-    f1q:'Comment commander ?',f1a:'Ajoutez les produits au panier, créez la commande, puis confirmez-la.',
-    f2q:'Les produits disponibles apparaissent-ils ici ?',f2a:'Oui, chaque produit disponible apparaît automatiquement.',
-    f3q:'Comment la commande est-elle confirmée ?',f3a:'Après confirmation, une page de confirmation avec facture s’affiche.',
-    search:'Rechercher un produit...',allCats:'Toutes les catégories',empty:'Aucun produit pour le moment.',add:'Ajouter au panier',remove:'Supprimer',available:'Disponible',soldout:'Épuisé',
-    msgAddProduct:'Ajoutez un produit d’abord.',msgFillFields:'Veuillez remplir le nom, le téléphone et la ville.',msgOrderReady:'La commande a été créée. Vous pouvez maintenant la vérifier puis la confirmer.',msgOrderChanged:'Le panier a changé, veuillez recréer la commande.',msgConfirmed:'Commande confirmée avec succès.',
-    placeOrder:'Créer la commande',confirmOrder:'Confirmer la commande',confirmQuestionTitle:'Confirmer la commande',confirmQuestionText:'Cette action va confirmer la commande et générer la facture finale. Vérifiez vos informations avant de continuer.',cancel:'Annuler',yesConfirm:'Oui, confirmer la commande',
-    confirmedTitle:'Votre commande est confirmée',confirmedText:'Votre commande a été créée avec succès. Conservez le numéro de commande pour le suivi.',orderDetails:'Détails de la commande',facture:'Facture',backStore:'Retour à la boutique',printFacture:'Imprimer la facture',
-    orderNo:'N° de commande',trackNo:'N° de suivi',date:'Date',name:'Nom',phone:'Téléphone',city:'Ville',note:'Note'
+
+  fr: {
+    dir: 'ltr',
+    brandTag: 'Accessoires et bijoux élégants',
+
+    navShop: 'Boutique',
+    navCart: 'Panier',
+    navPolicies: 'Politiques',
+    navFaq: 'FAQ',
+
+    eyebrow: 'PEARL • ACCESSORY',
+    heroTitle: 'Des accessoires élégants pour sublimer votre style',
+    heroText: 'Découvrez des pièces choisies avec soin et passez votre commande facilement en quelques étapes.',
+    heroBtn1: 'Acheter',
+    heroBtn2: 'Voir le panier',
+    heroBadge: 'Design raffiné · Belle qualité · Livraison rapide',
+
+    shopTitle: 'Produits',
+    shopText: 'Choisissez vos articles préférés et ajoutez-les au panier facilement.',
+
+    cartTitle: 'Panier',
+    cartText: 'Vérifiez votre sélection puis complétez vos informations.',
+
+    subtotal: 'Sous-total',
+    shipping: 'Livraison',
+    grandTotal: 'Total',
+
+    checkoutTitle: 'Finaliser la commande',
+    checkoutText: 'Remplissez vos informations, créez la commande, puis confirmez-la.',
+
+    policyTitle: 'Politiques',
+    policyText: 'Tout ce qu’il faut savoir avant de confirmer.',
+
+    p1t: 'Livraison',
+    p1d: 'La livraison est fixe à 35 MAD et s’ajoute automatiquement.',
+
+    p2t: 'Confirmation',
+    p2d: 'Après l’envoi, la disponibilité et la livraison sont confirmées par message.',
+
+    p3t: 'Échange',
+    p3d: 'Vous pouvez modifier ce texte selon votre politique.',
+
+    faqTitle: 'Questions fréquentes',
+    faqText: 'Des réponses rapides avant la commande.',
+
+    f1q: 'Comment commander ?',
+    f1a: 'Ajoutez les produits au panier, créez la commande, puis confirmez-la.',
+
+    f2q: 'Les produits disponibles apparaissent-ils ici ?',
+    f2a: 'Oui, chaque produit disponible apparaît automatiquement.',
+
+    f3q: 'Comment la commande est-elle confirmée ?',
+    f3a: 'Après confirmation, une page avec la facture s’affiche.',
+
+    search: 'Rechercher un produit...',
+    allCats: 'Toutes les catégories',
+
+    empty: 'Aucun produit pour le moment.',
+    add: 'Ajouter au panier',
+    remove: 'Supprimer',
+
+    available: 'Disponible',
+    soldout: 'Épuisé',
+
+    msgAddProduct: 'Ajoutez un produit d’abord.',
+    msgFillFields: 'Veuillez remplir le nom, le téléphone et la ville.',
+    msgOrderReady: 'La commande a été créée. Vous pouvez maintenant la vérifier puis la confirmer.',
+    msgOrderChanged: 'Le panier a changé, veuillez recréer la commande.',
+    msgConfirmed: 'Commande confirmée avec succès.',
+    msgAdded: 'Le produit a été ajouté au panier.',
+
+    placeOrder: 'Créer la commande',
+    confirmOrder: 'Confirmer la commande',
+
+    confirmQuestionTitle: 'Confirmer la commande',
+    confirmQuestionText: 'Cette action va confirmer la commande et générer la facture finale. Vérifiez vos informations avant de continuer.',
+
+    cancel: 'Annuler',
+    yesConfirm: 'Oui, confirmer la commande',
+
+    confirmedTitle: 'Votre commande est confirmée',
+    confirmedText: 'Votre commande a été créée avec succès. Conservez le numéro de commande pour le suivi.',
+
+    orderDetails: 'Détails de la commande',
+    facture: 'Facture',
+
+    backStore: 'Retour à la boutique',
+    printFacture: 'Imprimer la facture',
+
+    orderNo: 'N° de commande',
+    trackNo: 'N° de suivi',
+    date: 'Date',
+    name: 'Nom',
+    phone: 'Téléphone',
+    city: 'Ville',
+    address: 'Adresse',
+    note: 'Note',
+
+    qrCaption: 'Code QR',
+    freeShipping: '🚚 Livraison gratuite',
+    cartEmpty: 'Le panier est vide.',
+    qty: 'Qté'
   },
-  en:{
-    dir:'ltr',brandTag:'Elegant accessories and jewelry',navShop:'Shop',navCart:'Cart',navPolicies:'Policies',navFaq:'FAQ',
-    eyebrow:'PEARL • ACCESSORY',heroTitle:'Elegant accessories to complete your look',heroText:'Discover carefully selected pieces with a refined touch, and place your order in a few simple steps.',
-    heroBtn1:'Shop now',heroBtn2:'View cart',heroBadge:'Refined design · Lovely quality · Fast delivery',
-    shopTitle:'Products',shopText:'Choose the pieces you love and add them to the cart easily.',
-    cartTitle:'Cart',cartText:'Review your selected items, then complete your details to send the order.',
-    subtotal:'Subtotal',shipping:'Shipping',grandTotal:'Total',
-    checkoutTitle:'Checkout',checkoutText:'Fill in your details, create the order, then confirm it.',
-    policyTitle:'Policies',policyText:'Everything you need before confirming the order.',
-    p1t:'Shipping',p1d:'Shipping is fixed at 35 MAD and is added automatically.',
-    p2t:'Confirmation',p2d:'After sending the order, availability and delivery are confirmed by message.',
-    p3t:'Exchange',p3d:'You can change this text to match your store policy.',
-    faqTitle:'FAQ',faqText:'Quick answers before ordering.',
-    f1q:'How do I order?',f1a:'Add products to the cart, create the order, then confirm it.',
-    f2q:'Do available products appear here automatically?',f2a:'Yes, every available product appears automatically.',
-    f3q:'How is the order confirmed?',f3a:'After confirmation, a confirmation page with the invoice is shown.',
-    search:'Search for a product...',allCats:'All categories',empty:'No products yet.',add:'Add to cart',remove:'Remove',available:'Available',soldout:'Sold out',
-    msgAddProduct:'Add a product first.',msgFillFields:'Please fill in name, phone, and city.',msgOrderReady:'The order has been created. You can now review it and confirm it.',msgOrderChanged:'The cart changed. Please create the order again.',msgConfirmed:'Order confirmed successfully.',
-    placeOrder:'Place order',confirmOrder:'Confirm order',confirmQuestionTitle:'Confirm order',confirmQuestionText:'This will confirm the order and generate the final invoice. Please check your details before continuing.',cancel:'Cancel',yesConfirm:'Yes, confirm order',
-    confirmedTitle:'Your order is confirmed',confirmedText:'Your order has been created successfully. Keep the order number for tracking.',orderDetails:'Order details',facture:'Invoice',backStore:'Back to store',printFacture:'Print facture',
-    orderNo:'Order No',trackNo:'Tracking No',date:'Date',name:'Name',phone:'Phone',city:'City',note:'Note'
+
+  en: {
+    dir: 'ltr',
+    brandTag: 'Elegant accessories and jewelry',
+
+    navShop: 'Shop',
+    navCart: 'Cart',
+    navPolicies: 'Policies',
+    navFaq: 'FAQ',
+
+    eyebrow: 'PEARL • ACCESSORY',
+    heroTitle: 'Elegant accessories to complete your look',
+    heroText: 'Discover carefully selected pieces with a refined touch, and place your order in a few simple steps.',
+    heroBtn1: 'Shop now',
+    heroBtn2: 'View cart',
+    heroBadge: 'Refined design · Lovely quality · Fast delivery',
+
+    shopTitle: 'Products',
+    shopText: 'Choose the pieces you love and add them to the cart easily.',
+
+    cartTitle: 'Cart',
+    cartText: 'Review your selected items, then complete your details to send the order.',
+
+    subtotal: 'Subtotal',
+    shipping: 'Shipping',
+    grandTotal: 'Total',
+
+    checkoutTitle: 'Checkout',
+    checkoutText: 'Fill in your details, create the order, then confirm it.',
+
+    policyTitle: 'Policies',
+    policyText: 'Everything you need before confirming the order.',
+
+    p1t: 'Shipping',
+    p1d: 'Shipping is fixed at 35 MAD and is added automatically.',
+
+    p2t: 'Confirmation',
+    p2d: 'After sending the order, availability and delivery are confirmed by message.',
+
+    p3t: 'Exchange',
+    p3d: 'You can change this text to match your store policy.',
+
+    faqTitle: 'FAQ',
+    faqText: 'Quick answers before ordering.',
+
+    f1q: 'How do I order?',
+    f1a: 'Add products to the cart, create the order, then confirm it.',
+
+    f2q: 'Do available products appear here automatically?',
+    f2a: 'Yes, every available product appears automatically.',
+
+    f3q: 'How is the order confirmed?',
+    f3a: 'After confirmation, a confirmation page with the invoice is shown.',
+
+    search: 'Search for a product...',
+    allCats: 'All categories',
+
+    empty: 'No products yet.',
+    add: 'Add to cart',
+    remove: 'Remove',
+
+    available: 'Available',
+    soldout: 'Sold out',
+
+    msgAddProduct: 'Add a product first.',
+    msgFillFields: 'Please fill in name, phone, and city.',
+    msgOrderReady: 'The order has been created. You can now review it and confirm it.',
+    msgOrderChanged: 'The cart changed. Please create the order again.',
+    msgConfirmed: 'Order confirmed successfully.',
+    msgAdded: 'Item added to cart.',
+
+    placeOrder: 'Place order',
+    confirmOrder: 'Confirm order',
+
+    confirmQuestionTitle: 'Confirm order',
+    confirmQuestionText: 'This will confirm the order and generate the final invoice. Please check your details before continuing.',
+
+    cancel: 'Cancel',
+    yesConfirm: 'Yes, confirm order',
+
+    confirmedTitle: 'Your order is confirmed',
+    confirmedText: 'Your order has been created successfully. Keep the order number for tracking.',
+
+    orderDetails: 'Order details',
+    facture: 'Invoice',
+
+    backStore: 'Back to store',
+    printFacture: 'Print invoice',
+
+    orderNo: 'Order No',
+    trackNo: 'Tracking No',
+    date: 'Date',
+    name: 'Name',
+    phone: 'Phone',
+    city: 'City',
+    address: 'Address',
+    note: 'Note',
+
+    qrCaption: 'QR Code',
+    freeShipping: '🚚 Free Shipping',
+    cartEmpty: 'The cart is empty.',
+    qty: 'Qty'
   }
 };
-
 let currentLang = 'ar';
 let allProducts = [];
 let cart = [];
@@ -412,8 +853,9 @@ const els = {
   grandTotalText: document.getElementById('grandTotalText'),
   customerName: document.getElementById('customerName'),
   customerPhone: document.getElementById('customerPhone'),
-  customerCity: document.getElementById('customerCity'),
-  customerNote: document.getElementById('customerNote'),
+customerCity: document.getElementById('customerCity'),
+customerAddress: document.getElementById('customerAddress'),
+customerNote: document.getElementById('customerNote'),
   placeOrderBtn: document.getElementById('placeOrderBtn'),
   confirmOrderBtn: document.getElementById('confirmOrderBtn'),
   invoiceBox: document.getElementById('invoiceBox'),
@@ -427,7 +869,51 @@ function t(key){ return i18n[currentLang][key] || key; }
 function money(v){ return `${Number(v || 0).toFixed(0)} MAD`; }
 function productName(p){ return currentLang === 'fr' ? (p.name_fr || p.name_ar || p.name_en || '') : currentLang === 'en' ? (p.name_en || p.name_ar || p.name_fr || '') : (p.name_ar || p.name_fr || p.name_en || ''); }
 function productDesc(p){ return currentLang === 'fr' ? (p.description_fr || p.description_ar || p.description_en || '') : currentLang === 'en' ? (p.description_en || p.description_ar || p.description_fr || '') : (p.description_ar || p.description_fr || p.description_en || ''); }
+function setLoading(button, isLoading){
+  if(!button) return;
+  button.classList.toggle('loading', isLoading);
+  button.disabled = isLoading;
+}
 
+function buildQrText(order){
+  return JSON.stringify({
+    order_number: order.orderNumber,
+    tracking_number: order.trackingNumber,
+    total: order.total
+  });
+}
+
+function renderFactureQR(order){
+  const qrBox = document.getElementById('factureQr');
+  if(!qrBox) return;
+  qrBox.innerHTML = '';
+
+  new QRCode(qrBox, {
+    text: buildQrText(order),
+    width: 220,
+    height: 220,
+    colorDark: "#111111",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.Q
+  });
+}
+
+async function downloadFacturePDF(order) {
+  const factureElement = document.getElementById('factureToDownload');
+  if (!factureElement) throw new Error('Facture element not found');
+
+  await new Promise(r => setTimeout(r, 500));
+
+  const opt = {
+    margin: 10,
+    filename: `${order.orderNumber}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  await html2pdf().set(opt).from(factureElement).save();
+}
 function showMessage(type, text){
   els.formMessage.className = `message ${type} show`;
   els.formMessage.textContent = text;
@@ -437,7 +923,16 @@ function hideMessage(){
   els.formMessage.className = 'message info';
   els.formMessage.textContent = '';
 }
+function showToast(text){
+  const toast = document.getElementById('toast');
 
+  toast.textContent = text;
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
 function applyLanguage(){
   document.documentElement.lang = currentLang;
   document.documentElement.dir = i18n[currentLang].dir;
@@ -445,6 +940,12 @@ function applyLanguage(){
     const key = el.dataset.i18n;
     if(i18n[currentLang][key]) el.textContent = i18n[currentLang][key];
   });
+  els.customerAddress.placeholder =
+  currentLang === 'ar'
+    ? 'العنوان الكامل'
+    : currentLang === 'fr'
+      ? 'Adresse complète'
+      : 'Full address';
 
   document.getElementById('brandTag').textContent = t('brandTag');
   els.searchInput.placeholder = t('search');
@@ -482,6 +983,7 @@ function applyLanguage(){
   if(pendingOrder) renderInvoicePreview(pendingOrder);
 }
 
+
 function fillCategoryFilter(){
   const cats = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
   const selected = els.categoryFilter.value || 'all';
@@ -507,21 +1009,61 @@ function filteredProducts(){
 
 function renderProducts(){
   const list = filteredProducts();
-  if(!list.length){ els.productsGrid.innerHTML = `<div class="empty">${t('empty')}</div>`; return; }
+  if(!list.length){
+    els.productsGrid.innerHTML = `<div class="empty">${t('empty')}</div>`;
+    return;
+  }
+
   els.productsGrid.innerHTML = list.map(p => `
-    <article class="card">
-      <div class="card-media"><img src="${p.image_url || './logo.jpeg'}" alt="${productName(p)}" loading="lazy"></div>
+<article class="card">
+  ${Number(p.shipping) === 0 ? `
+    <div class="free-shipping-badge">
+      ${currentLang === 'ar'
+        ? '🚚 شحن مجاني'
+        : currentLang === 'fr'
+          ? '🚚 Livraison Gratuite'
+          : '🚚 FREE SHIPPING'}
+    </div>
+  ` : ''}
+      <div class="card-media">
+        <img src="${p.image_url || './logo.jpeg'}" alt="${productName(p)}" loading="lazy">
+      </div>
       <div class="card-body">
         <div class="chip">${p.category || 'Accessory'}</div>
-        <div class="title-row"><h4>${productName(p)}</h4><div class="price">${money(p.price)}</div></div>
-        <div class="meta"><span>${(p.stock || '').toLowerCase() === 'sold out' ? t('soldout') : t('available')}</span><span>•</span><span>${money(p.shipping || 35)} ${currentLang === 'ar' ? 'شحن' : currentLang === 'fr' ? 'livraison' : 'shipping'}</span></div>
+        <div class="title-row">
+          <h4>${productName(p)}</h4>
+          <div class="price">${money(p.price)}</div>
+        </div>
+        <div class="meta">
+          <span>${(p.stock || '').toLowerCase() === 'sold out' ? t('soldout') : t('available')}</span>
+          <span>•</span>
+<span>
+${
+  Number(p.shipping) === 0
+    ? (currentLang === 'ar'
+        ? '🚚 شحن مجاني'
+        : currentLang === 'fr'
+          ? '🚚 Livraison gratuite'
+          : '🚚 Free Shipping')
+    : `${money(p.shipping)} ${currentLang === 'ar'
+        ? 'شحن'
+        : currentLang === 'fr'
+          ? 'livraison'
+          : 'shipping'}`
+}
+</span>
+        </div>
         <div class="desc">${productDesc(p) || ''}</div>
         <div class="card-actions">
-          <button class="btn" onclick="addToCart('${p.id}')">${t('add')}</button>
+          <button class="btn add-to-cart-btn" data-id="${p.id}">${t('add')}</button>
         </div>
       </div>
     </article>
   `).join('');
+
+  document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+    btn.addEventListener('click', () => addToCart(btn.dataset.id));
+  });
 }
 
 function resetPendingOrder(showInfo = true){
@@ -532,14 +1074,22 @@ function resetPendingOrder(showInfo = true){
   if(showInfo) showMessage('info', t('msgOrderChanged'));
 }
 
-function addToCart(id){
-  const p = allProducts.find(x => x.id === id);
-  if(!p) return;
-  const found = cart.find(x => x.id === id);
-  if(found) found.qty += 1;
-  else cart.push({...p, qty:1});
+function addToCart(id) {
+  const p = allProducts.find(x => String(x.id) === String(id));
+  if (!p) return;
+
+  const found = cart.find(x => String(x.id) === String(id));
+  if (found) found.qty += 1;
+  else cart.push({ ...p, qty: 1 });
+
   resetPendingOrder(false);
   renderCart();
+
+showToast(t('msgAdded'));
+
+  document.getElementById('formMessage')
+    .scrollIntoView({ behavior: 'smooth', block: 'center' });
+
 }
 window.addToCart = addToCart;
 
@@ -562,8 +1112,10 @@ window.removeItem = removeItem;
 
 function summary(){
   const subtotal = cart.reduce((s,i) => s + Number(i.price || 0) * i.qty, 0);
-  const shipping = cart.length ? Math.max(...cart.map(i => Number(i.shipping || 35))) : 0;
-  return { subtotal, shipping, total: subtotal + shipping };
+const shipping = cart.some(i => Number(i.shipping) === 0)
+  ? 0
+  : (cart.length ? Math.max(...cart.map(i => Number(i.shipping ?? 35))) : 0);
+    return { subtotal, shipping, total: subtotal + shipping };
 }
 
 function renderCart(){
@@ -596,7 +1148,7 @@ function generateOrderNumber(){
   const m = String(now.getMonth() + 1).padStart(2,'0');
   const d = String(now.getDate()).padStart(2,'0');
   const rand = Math.floor(1000 + Math.random() * 9000);
-  return `PA-${y}${m}${d}-${rand}`;
+return `PA-${y}${m}${d}-${Date.now().toString().slice(-6)}-${rand}`;
 }
 
 function buildInvoiceData(){
@@ -608,6 +1160,7 @@ function buildInvoiceData(){
     customerPhone: els.customerPhone.value || '-',
     customerCity: els.customerCity.value || '-',
     customerNote: els.customerNote.value || '-',
+    customerAddress: els.customerAddress.value || '-',
     items: cart.map(item => ({
       name: productName(item),
       qty: item.qty,
@@ -627,8 +1180,9 @@ function renderInvoicePreview(order){
     <strong>${currentLang === 'ar' ? 'تم إنشاء الطلب' : currentLang === 'fr' ? 'Commande créée' : 'Order created'}</strong><br>
     ${t('orderNo')}: ${order.orderNumber}<br>
     ${t('trackNo')}: ${order.trackingNumber}<br>
-    ${t('name')}: ${order.customerName}<br>
     ${t('city')}: ${order.customerCity}<br>
+${t('address')}: ${order.customerAddress}<br>
+${t('grandTotal')}: ${money(order.total)}<br><br>
     ${t('grandTotal')}: ${money(order.total)}<br><br>
     ${order.items.map((item, i) => `${i+1}. ${item.name} × ${item.qty} = ${money(item.total)}`).join('<br>')}
   `;
@@ -656,6 +1210,7 @@ function fillConfirmationPage(order){
 
 function showConfirmationPage(order){
   fillConfirmationPage(order);
+  renderFactureQR(order);
   els.mainSite.classList.add('hide-main');
   els.confirmationPage.classList.add('show');
   window.scrollTo({top:0,behavior:'smooth'});
@@ -681,88 +1236,134 @@ async function loadProducts(){
 }
 
 els.placeOrderBtn.addEventListener('click', () => {
-  hideMessage();
+  setLoading(els.placeOrderBtn, true);
 
-  if(!cart.length){
-    showMessage('error', t('msgAddProduct'));
-    return;
+  try{
+    hideMessage();
+
+    if(!cart.length){
+      showMessage('error', t('msgAddProduct'));
+      return;
+    }
+
+    if(!els.customerName.value || !els.customerPhone.value || !els.customerCity.value){
+      showMessage('error', t('msgFillFields'));
+      return;
+    }
+
+    pendingOrder = buildInvoiceData();
+    renderInvoicePreview(pendingOrder);
+    els.confirmOrderBtn.disabled = false;
+    showMessage('success', t('msgOrderReady'));
+  } finally {
+    setLoading(els.placeOrderBtn, false);
   }
-
-  if(!els.customerName.value || !els.customerPhone.value || !els.customerCity.value){
-    showMessage('error', t('msgFillFields'));
-    return;
-  }
-
-  pendingOrder = buildInvoiceData();
-  renderInvoicePreview(pendingOrder);
-  els.confirmOrderBtn.disabled = false;
-  showMessage('success', t('msgOrderReady'));
 });
 
 els.confirmOrderBtn.addEventListener('click', () => {
-  if(!pendingOrder){
-    showMessage('error', t('msgOrderChanged'));
-    return;
+  setLoading(els.confirmOrderBtn, true);
+
+  try{
+    if(!pendingOrder){
+      showMessage('error', t('msgOrderChanged'));
+      return;
+    }
+    els.confirmOverlay.classList.add('show');
+  } finally {
+    setLoading(els.confirmOrderBtn, false);
   }
-  els.confirmOverlay.classList.add('show');
 });
 
 document.getElementById('cancelConfirmBtn').addEventListener('click', () => {
   els.confirmOverlay.classList.remove('show');
 });
 
-document.getElementById('finalConfirmBtn').addEventListener('click', async () => {
-  if (!pendingOrder) return;
+document.getElementById("finalConfirmBtn").addEventListener("click", async () => {
+  const finalBtn = document.getElementById("finalConfirmBtn");
+  setLoading(finalBtn, true);
 
-  els.confirmOverlay.classList.remove('show');
+  try {
+    if (!pendingOrder) {
+      showMessage("error", t("msgOrderChanged"));
+      return;
+    }
 
-  const orderToSave = {
-    order_number: pendingOrder.orderNumber,
-    tracking_number: pendingOrder.trackingNumber,
-    status: 'confirmed',
-    customer_name: pendingOrder.customerName,
-    customer_phone: pendingOrder.customerPhone,
-    customer_city: pendingOrder.customerCity,
-    customer_note: pendingOrder.customerNote,
-    items: pendingOrder.items,
-    subtotal: pendingOrder.subtotal,
-    shipping: pendingOrder.shipping,
-    total: pendingOrder.total,
-    created_at: new Date().toISOString()
-  };
+    els.confirmOverlay.classList.remove("show");
+    const finalOrder = pendingOrder;
 
-  const { error } = await supabaseClient.from('orders').insert([orderToSave]);
+const orderToSave = {
+  order_number: finalOrder.orderNumber,
+  tracking_number: finalOrder.trackingNumber,
+  status: "confirmed",
+  customer_name: finalOrder.customerName,
+  customer_phone: finalOrder.customerPhone,
+  customer_city: finalOrder.customerCity,
+  customer_address: finalOrder.customerAddress, // <-- ERROR
+  customer_note: finalOrder.customerNote,
+  items: finalOrder.items,
+  subtotal: finalOrder.subtotal,
+  shipping: finalOrder.shipping,
+  total: finalOrder.total
+};
 
-  if (error) {
-    showMessage('error', 'Failed to save order: ' + error.message);
-    return;
+    const { error } = await supabaseClient
+      .from("orders")
+      .upsert(orderToSave, { onConflict: "order_number" });
+
+    if (error) {
+      showMessage("error", "Failed to save order: " + error.message);
+      return;
+    }
+
+    showConfirmationPage(finalOrder);
+
+    await new Promise(r => setTimeout(r, 800));
+    await downloadFacturePDF(finalOrder);
+
+    cart = [];
+    pendingOrder = null;
+    renderCart();
+  } catch (err) {
+    console.error("Facture error:", err);
+    showMessage("error", "Facture generation failed: " + (err?.message || err));
+  } finally {
+    setLoading(finalBtn, false);
   }
-
-  showConfirmationPage(pendingOrder);
-  cart = [];
-  pendingOrder = null;
-  renderCart();
 });
 
 document.getElementById('backToStoreBtn').addEventListener('click', () => {
-  els.confirmationPage.classList.remove('show');
-  els.mainSite.classList.remove('hide-main');
-  cart = [];
-  pendingOrder = null;
-  els.invoiceBox.className = 'invoice-box';
-  els.invoiceBox.innerHTML = '';
-  els.confirmOrderBtn.disabled = true;
-  els.customerName.value = '';
-  els.customerPhone.value = '';
-  els.customerCity.value = '';
-  els.customerNote.value = '';
-  hideMessage();
-  renderCart();
-  window.scrollTo({top:0,behavior:'smooth'});
+  const btn = document.getElementById('backToStoreBtn');
+  setLoading(btn, true);
+
+  try{
+    els.confirmationPage.classList.remove('show');
+    els.mainSite.classList.remove('hide-main');
+    cart = [];
+    pendingOrder = null;
+    els.invoiceBox.className = 'invoice-box';
+    els.invoiceBox.innerHTML = '';
+    els.confirmOrderBtn.disabled = true;
+    els.customerName.value = '';
+    els.customerPhone.value = '';
+    els.customerCity.value = '';
+    els.customerNote.value = '';
+    hideMessage();
+    renderCart();
+    window.scrollTo({top:0,behavior:'smooth'});
+  } finally {
+    setLoading(btn, false);
+  }
 });
 
 document.getElementById('printFactureBtn').addEventListener('click', () => {
-  window.print();
+  const btn = document.getElementById('printFactureBtn');
+  setLoading(btn, true);
+
+  try{
+    window.print();
+  } finally {
+    setLoading(btn, false);
+  }
 });
 
 document.querySelectorAll('.lang button').forEach(btn => btn.addEventListener('click', () => {
