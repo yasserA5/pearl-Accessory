@@ -307,6 +307,31 @@
   font-weight:700;
   z-index:10;
 }
+.featured-badge{
+  position:absolute;
+  top:10px;
+  left:10px;
+  background:#ffb300;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  z-index:10;
+}
+
+.low-stock-badge{
+  position:absolute;
+  top:45px;
+  right:10px;
+  background:#dc3545;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  z-index:10;
+}
   </style>
 </head>
 <body>
@@ -1016,6 +1041,19 @@ function renderProducts(){
 
   els.productsGrid.innerHTML = list.map(p => `
 <article class="card">
+
+  ${p.featured ? `
+    <div class="featured-badge">
+      ⭐ Featured
+    </div>
+  ` : ''}
+
+  ${Number(p.quantity || 0) > 0 && Number(p.quantity || 0) <= 5 ? `
+    <div class="low-stock-badge">
+      ⚠️ Low Stock (${p.quantity})
+    </div>
+  ` : ''}
+
   ${Number(p.shipping) === 0 ? `
     <div class="free-shipping-badge">
       ${currentLang === 'ar'
@@ -1037,6 +1075,7 @@ function renderProducts(){
         <div class="meta">
           <span>${(p.stock || '').toLowerCase() === 'sold out' ? t('soldout') : t('available')}</span>
           <span>•</span>
+          ${p.quantity ? `<span>${t('stock')}: ${p.quantity}</span>` : ''}
 <span>
 ${
   Number(p.shipping) === 0
