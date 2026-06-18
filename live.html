@@ -307,7 +307,11 @@
           <div class="muted" id="labelSession">New this session</div>
         </div>
       </div>
-
+<div style="margin-bottom:12px; display:flex; justify-content:flex-end;">
+  <button class="btn danger" id="deleteAllBtn" type="button">
+    Delete All Orders
+  </button>
+</div>
       <div class="panel">
         <div class="toolbar">
           <input
@@ -770,6 +774,33 @@ el("locationBox").innerHTML = `
                 : "Delete this order?",
           )
         )
+        el("deleteAllBtn").addEventListener("click", async () => {
+  const confirmMsg =
+    lang === "ar"
+      ? "هل تريد حذف جميع الطلبات؟ هذا الإجراء لا يمكن التراجع عنه!"
+      : lang === "fr"
+        ? "Supprimer toutes les commandes ? Action irréversible !"
+        : "Delete ALL orders? This cannot be undone!";
+
+  if (!confirm(confirmMsg)) return;
+
+  const { error } = await supabaseClient
+    .from("orders")
+    .delete()
+    .neq("id", "00000000-0000-0000-0000-000000000000");
+
+  if (error) {
+    setMsg("Supabase error: " + error.message);
+    return;
+  }
+
+  selected = null;
+  orders = [];
+  seenIds.clear();
+
+  setMsg("All orders deleted.");
+  render();
+});
           return;
         const { error } = await supabaseClient
           .from("orders")

@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="en">
-<head>
+<html lang="ar" dir="rtl">
+  <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Pearl Accessory Admin</title>
@@ -157,13 +157,31 @@
       <div class="brand">
         <div class="logo"><img src="./logo.jpeg" alt="Pearl logo"></div>
         <div>
-          <h1>Pearl Accessory Admin</h1>
-          <div class="sub">Product management</div>
+          <h1 data-i18n="title">لوحة تحكم بيرل أكسسوري</h1>
+<div class="sub" data-i18n="subtitle">إدارة المنتجات</div>
         </div>
       </div>
       <div class="actions" style="margin-top:0">
-        <button class="btn alt" id="logoutBtn" type="button">Logout</button>
-      </div>
+<select id="languageSwitcher" class="field" style="width:160px">
+  <option value="ar">العربية</option>
+  <option value="fr">Français</option>
+  <option value="en">English</option>
+</select>
+
+<button
+  class="btn alt"
+  id="logoutBtn"
+  type="button"
+  data-i18n="logout">
+  Logout
+</button>
+     </div>
+<button
+  class="btn alt"
+  id="duplicateBtn"
+  type="button">
+  Duplicate
+</button>
     </div>
 
     <section id="authView" class="auth-box panel">
@@ -181,36 +199,112 @@
 
     <section id="adminView" class="hidden">
       <div class="panel" style="margin-bottom:18px">
-        <h2>Quick stats</h2>
-        <p class="mini">Overview of your product catalog.</p>
-        <div class="grid">
-          <div class="status"><strong id="statProducts">0</strong><div class="mini">Products</div></div>
-          <div class="status"><strong id="statFeatured">0</strong><div class="mini">Featured</div></div>
-          <div class="status"><strong id="statAvailable">0</strong><div class="mini">Available</div></div>
+<h2 data-i18n="quickStats">Quick stats</h2>
+<p class="mini" data-i18n="catalogOverview">
+Overview of your product catalog.
+</p>
+<div class="grid">
+
+<div class="status">
+  <strong id="statProducts">0</strong>
+  <div class="mini" data-i18n="products">
+    Products
+  </div>
+</div>
+
+<div class="status">
+  <strong id="statFeatured">0</strong>
+  <div class="mini" data-i18n="featured">
+    Featured
+  </div>
+</div>
+
+<div class="status">
+  <strong id="statAvailable">0</strong>
+  <div class="mini" data-i18n="available">
+    Available
+  </div>
+</div>
           <div class="status"><strong id="statValue">0 MAD</strong><div class="mini">Catalog value</div></div>
+          <div class="status">
+  <strong id="avgPrice">0 MAD</strong>
+<div class="mini" data-i18n="averagePrice">
+Average price
+</div>
+</div>
         </div>
       </div>
 
       <div class="layout">
         <div class="panel">
-          <h2>Product form</h2>
-          <p class="mini">Choose an image, preview it, upload it, then save the product.</p>
+<h2 data-i18n="productForm">
+Product form
+</h2>
+<p class="mini" data-i18n="productFormDesc">
+Choose an image, preview it, upload it, then save the product.
+</p>
           <div id="saveStatus" class="status">Ready.</div>
 
           <div class="grid">
-            <input class="field" id="name_ar" placeholder="Arabic name">
-            <input class="field" id="category" placeholder="Category">
+<input
+  class="field"
+  id="name_ar"
+  placeholder="Arabic name"
+  data-i18n="arabicName">
+              <div class="helper">
+FR + EN will be generated automatically
+</div>
+<select class="field" id="category">
+<option value="" data-i18n="selectCategory">
+  Select category
+</option>
+<option value="Necklaces" data-i18n="necklaces"></option>
+<option value="Bracelets" data-i18n="bracelets"></option>
+<option value="Rings" data-i18n="rings"></option>
+<option value="Earrings" data-i18n="earrings"></option>
+<option value="Sets" data-i18n="sets"></option>
+</select>
+<input
+  class="field"
+  id="name_fr"
+  placeholder="French name"
+  data-i18n="frenchName">
+              <input class="field" id="price" type="number" value="100" placeholder="Price">
 
-            <input class="field" id="name_fr" placeholder="French name">
-            <input class="field" id="price" type="number" value="100" placeholder="Price">
-
-            <input class="field" id="name_en" placeholder="English name">
-<input class="field" id="shipping" type="number" value="35" placeholder="Shipping">
+<input
+  class="field"
+  id="name_en"
+  placeholder="English name"
+  data-i18n="englishName">
+  <select class="field" id="shipping">
+<option value="35" data-i18n="standardDelivery"></option>
+<option value="60" data-i18n="expressDelivery"></option>
+<option value="0" data-i18n="freeShipping"></option>
+</select>
             <div class="full upload-row">
-              <input class="field" id="image_url" placeholder="Image URL will appear here after upload" readonly>
+              <input
+  class="field"
+  id="image_url"
+  placeholder="Image URL will appear here after upload"
+  data-i18n="imageUrlPlaceholder"
+  readonly>
+
               <div class="helper">Step 1: choose image. Step 2: upload image. Step 3: save product.</div>
               <input id="image_file" type="file" accept="image/*">
-              <button class="btn ok" id="uploadImageBtn" type="button">Upload selected image</button>
+              <button
+  class="btn ok"
+  id="uploadImageBtn"
+  type="button"
+  data-i18n="uploadImage">
+  Upload selected image
+</button>
+<button
+  class="btn danger"
+  id="removeImageBtn"
+  type="button"
+  data-i18n="removeImage">
+  Remove Image
+</button>
             </div>
 
             <div class="full preview-wrap">
@@ -218,28 +312,87 @@
               <div class="helper" id="imageMeta">No image selected yet.</div>
             </div>
 
-            <input class="field" id="stock" placeholder="available / sold out" value="available">
+<input
+  class="field"
+  id="quantity"
+  type="number"
+  min="0"
+  value="10"
+  placeholder="Quantity">
 
+<select class="field" id="stock">
+  <option value="available" data-i18n="available">
+    Available
+  </option>
+
+  <option value="low_stock" data-i18n="lowStock">
+    Low Stock
+  </option>
+
+  <option value="sold_out" data-i18n="soldOut">
+    Sold Out
+  </option>
+</select>
             <select class="field" id="featured">
-              <option value="false">Not featured</option>
-              <option value="true">Featured</option>
+<option value="false" data-i18n="notFeatured"></option>
+<option value="true" data-i18n="featured"></option>>
             </select>
 
-            <textarea class="field full" id="description_ar" placeholder="Arabic description"></textarea>
-            <textarea class="field full" id="description_fr" placeholder="French description"></textarea>
-            <textarea class="field full" id="description_en" placeholder="English description"></textarea>
+           <textarea id="description_ar" data-i18n="arabicDescription"></textarea>
+<textarea id="description_fr" data-i18n="frenchDescription"></textarea>
+<textarea id="description_en" data-i18n="englishDescription"></textarea>
+           <button
+  class="btn ok full"
+  id="translateBtn"
+  type="button"
+  data-i18n="translate">
+  Auto Translate
+</button>
           </div>
 
           <div class="actions">
-            <button class="btn primary" id="saveBtn" type="button">Save product</button>
-            <button class="btn alt" id="newBtn" type="button">New product</button>
-            <button class="btn danger" id="deleteBtn" type="button">Delete product</button>
+<button
+  class="btn primary"
+  id="saveBtn"
+  type="button"
+  data-i18n="save">
+  Save product
+</button>          
+<button
+  class="btn alt"
+  id="newBtn"
+  type="button"
+  data-i18n="new">
+  New product
+</button> 
+<button
+  class="btn danger"
+  id="deleteBtn"
+  type="button"
+  data-i18n="delete">
+  Delete product
+</button>
           </div>
         </div>
 
         <div class="panel">
-          <h2>Products</h2>
-          <p class="mini">Click a product to edit it.</p>
+          <select
+  id="sortProducts"
+  class="field"
+  style="margin-bottom:12px">
+
+<option value="newest" data-i18n="newest"></option>
+<option value="oldest" data-i18n="oldest"></option>
+<option value="high" data-i18n="priceHigh"></option>
+<option value="low" data-i18n="priceLow"></option>
+</select>
+<input
+  class="field"
+  id="searchProducts"
+  data-i18n="search"
+  placeholder="Search products..."
+  style="margin-bottom:12px"
+>
           <div id="listStatus" class="status">Loading products...</div>
           <div class="list" id="productsList"></div>
         </div>
@@ -268,14 +421,399 @@ const statProducts = document.getElementById('statProducts');
 const statFeatured = document.getElementById('statFeatured');
 const statAvailable = document.getElementById('statAvailable');
 const statValue = document.getElementById('statValue');
+const avgPrice = document.getElementById('avgPrice');
 const imagePreview = document.getElementById('imagePreview');
 const imageMeta = document.getElementById('imageMeta');
 const imageFileInput = document.getElementById('image_file');
 const imageUrlInput = document.getElementById('image_url');
 const uploadImageBtn = document.getElementById('uploadImageBtn');
+const translateBtn =
+document.getElementById('translateBtn');
+async function translate(text, target){
 
-const fields = ['name_ar','name_fr','name_en','category','price','shipping','image_url','stock','featured','description_ar','description_fr','description_en'];
+  const url =
+    `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=${target}&dt=t&q=${encodeURIComponent(text)}`;
 
+  const response = await fetch(url);
+  const data = await response.json();
+
+  return data[0]
+    .map(item => item[0])
+    .join('');
+}
+const searchProducts = document.getElementById('searchProducts')
+const sortProducts =
+document.getElementById(
+'sortProducts'
+);
+const translations = {
+
+ar:{
+title:'لوحة تحكم بيرل أكسسوري',
+subtitle:'إدارة المنتجات',
+
+logout:'تسجيل الخروج',
+
+save:'حفظ المنتج',
+new:'منتج جديد',
+delete:'حذف المنتج',
+duplicate:'نسخ المنتج',
+
+login:'دخول',
+ownerLogin:'دخول المالك',
+
+quickStats:'إحصائيات سريعة',
+catalogOverview:'نظرة عامة على المنتجات',
+
+productForm:'نموذج المنتج',
+productFormDesc:'اختر صورة، عاينها، ارفعها ثم احفظ المنتج',
+
+products:'المنتجات',
+productsCount:'عدد المنتجات',
+
+search:'بحث عن منتج',
+
+featured:'مميز',
+notFeatured:'غير مميز',
+
+available:'متوفر',
+lowStock:'مخزون منخفض',
+soldOut:'نفد المخزون',
+
+averagePrice:'متوسط السعر',
+catalogValue:'قيمة الكتالوج',
+
+uploadImage:'رفع الصورة',
+uploadSelectedImage:'رفع الصورة المحددة',
+removeImage:'حذف الصورة',
+
+translate:'ترجمة تلقائية',
+
+newest:'الأحدث',
+oldest:'الأقدم',
+priceHigh:'الأغلى سعراً',
+priceLow:'الأرخص سعراً',
+
+category:'الفئة',
+selectCategory:'اختر الفئة',
+
+necklaces:'قلائد',
+bracelets:'أساور',
+rings:'خواتم',
+earrings:'أقراط',
+sets:'أطقم',
+
+price:'السعر',
+quantity:'الكمية',
+
+arabicName:'الاسم بالعربية',
+frenchName:'الاسم بالفرنسية',
+englishName:'الاسم بالإنجليزية',
+
+arabicDescription:'الوصف بالعربية',
+frenchDescription:'الوصف بالفرنسية',
+englishDescription:'الوصف بالإنجليزية',
+
+autoGenerateNames:'سيتم إنشاء الفرنسية والإنجليزية تلقائياً',
+
+imageUrlPlaceholder:'سيظهر رابط الصورة هنا بعد الرفع',
+
+stepGuide:'الخطوة 1: اختر صورة. الخطوة 2: ارفع الصورة. الخطوة 3: احفظ المنتج',
+
+standardDelivery:'توصيل عادي (35 درهم)',
+expressDelivery:'توصيل سريع (60 درهم)',
+freeShipping:'شحن مجاني',
+
+edit:'تعديل',
+
+ready:'جاهز',
+loading:'جاري التحميل',
+loadingProducts:'جاري تحميل المنتجات...',
+noProducts:'لا توجد منتجات',
+
+productFormReady:'نموذج المنتج جاهز',
+
+noImageSelected:'لم يتم اختيار صورة بعد',
+currentSavedImage:'الصورة الحالية',
+
+saving:'جاري الحفظ...',
+deleting:'جاري الحذف...',
+
+savedSuccessfully:'تم حفظ المنتج بنجاح',
+deletedSuccessfully:'تم حذف المنتج بنجاح',
+
+translationCompleted:'تمت الترجمة بنجاح',
+translationFailed:'فشلت الترجمة',
+
+chooseFile:'اختر ملفاً',
+noFileChosen:'لم يتم اختيار ملف',
+
+productCountSuffix:'منتج',
+
+stockAvailable:'متوفر',
+stockLow:'مخزون منخفض',
+stockOut:'نفد المخزون'
+},
+
+fr:{
+title:'Administration Pearl Accessory',
+subtitle:'Gestion des produits',
+
+logout:'Déconnexion',
+
+save:'Enregistrer le produit',
+new:'Nouveau produit',
+delete:'Supprimer le produit',
+duplicate:'Dupliquer le produit',
+
+login:'Connexion',
+ownerLogin:'Connexion administrateur',
+
+quickStats:'Statistiques rapides',
+catalogOverview:'Aperçu du catalogue produits',
+
+productForm:'Formulaire produit',
+productFormDesc:'Choisissez une image, prévisualisez-la, téléchargez-la puis enregistrez le produit',
+
+products:'Produits',
+productsCount:'Nombre de produits',
+
+search:'Rechercher un produit',
+
+featured:'Mis en avant',
+notFeatured:'Non mis en avant',
+
+available:'Disponible',
+lowStock:'Stock faible',
+soldOut:'Rupture de stock',
+
+averagePrice:'Prix moyen',
+catalogValue:'Valeur du catalogue',
+
+uploadImage:'Télécharger l’image',
+uploadSelectedImage:'Télécharger l’image sélectionnée',
+removeImage:'Supprimer l’image',
+
+translate:'Traduction automatique',
+
+newest:'Plus récent',
+oldest:'Plus ancien',
+priceHigh:'Prix décroissant',
+priceLow:'Prix croissant',
+
+category:'Catégorie',
+selectCategory:'Sélectionner une catégorie',
+
+necklaces:'Colliers',
+bracelets:'Bracelets',
+rings:'Bagues',
+earrings:'Boucles d’oreilles',
+sets:'Ensembles',
+
+price:'Prix',
+quantity:'Quantité',
+
+arabicName:'Nom arabe',
+frenchName:'Nom français',
+englishName:'Nom anglais',
+
+arabicDescription:'Description arabe',
+frenchDescription:'Description française',
+englishDescription:'Description anglaise',
+
+autoGenerateNames:'Le français et l’anglais seront générés automatiquement',
+
+imageUrlPlaceholder:'L’URL de l’image apparaîtra ici après le téléchargement',
+
+stepGuide:'Étape 1 : choisir une image. Étape 2 : télécharger l’image. Étape 3 : enregistrer le produit',
+
+standardDelivery:'Livraison standard (35 MAD)',
+expressDelivery:'Livraison express (60 MAD)',
+freeShipping:'Livraison gratuite',
+
+edit:'Modifier',
+
+ready:'Prêt',
+loading:'Chargement',
+loadingProducts:'Chargement des produits...',
+noProducts:'Aucun produit',
+
+productFormReady:'Nouveau formulaire produit prêt',
+
+noImageSelected:'Aucune image sélectionnée',
+currentSavedImage:'Image actuelle',
+
+saving:'Enregistrement...',
+deleting:'Suppression...',
+
+savedSuccessfully:'Produit enregistré avec succès',
+deletedSuccessfully:'Produit supprimé avec succès',
+
+translationCompleted:'Traduction terminée',
+translationFailed:'Échec de la traduction',
+
+chooseFile:'Choisir un fichier',
+noFileChosen:'Aucun fichier choisi',
+
+productCountSuffix:'produit(s)',
+
+stockAvailable:'Disponible',
+stockLow:'Stock faible',
+stockOut:'Rupture de stock'
+},
+
+en:{
+title:'Pearl Accessory Admin',
+subtitle:'Product Management',
+
+logout:'Logout',
+
+save:'Save Product',
+new:'New Product',
+delete:'Delete Product',
+duplicate:'Duplicate Product',
+
+login:'Login',
+ownerLogin:'Owner Login',
+
+quickStats:'Quick Stats',
+catalogOverview:'Overview of your product catalog',
+
+productForm:'Product Form',
+productFormDesc:'Choose an image, preview it, upload it, then save the product',
+
+products:'Products',
+productsCount:'Products Count',
+
+search:'Search Products',
+
+featured:'Featured',
+notFeatured:'Not Featured',
+
+available:'Available',
+lowStock:'Low Stock',
+soldOut:'Sold Out',
+
+averagePrice:'Average Price',
+catalogValue:'Catalog Value',
+
+uploadImage:'Upload Image',
+uploadSelectedImage:'Upload Selected Image',
+removeImage:'Remove Image',
+
+translate:'Auto Translate',
+
+newest:'Newest',
+oldest:'Oldest',
+priceHigh:'Price High',
+priceLow:'Price Low',
+
+category:'Category',
+selectCategory:'Select Category',
+
+necklaces:'Necklaces',
+bracelets:'Bracelets',
+rings:'Rings',
+earrings:'Earrings',
+sets:'Sets',
+
+price:'Price',
+quantity:'Quantity',
+
+arabicName:'Arabic Name',
+frenchName:'French Name',
+englishName:'English Name',
+
+arabicDescription:'Arabic Description',
+frenchDescription:'French Description',
+englishDescription:'English Description',
+
+autoGenerateNames:'French and English will be generated automatically',
+
+imageUrlPlaceholder:'Image URL will appear here after upload',
+
+stepGuide:'Step 1: Choose image. Step 2: Upload image. Step 3: Save product',
+
+standardDelivery:'Standard Delivery (35 MAD)',
+expressDelivery:'Express Delivery (60 MAD)',
+freeShipping:'Free Shipping',
+
+edit:'Edit',
+
+ready:'Ready',
+loading:'Loading',
+loadingProducts:'Loading Products...',
+noProducts:'No Products',
+
+productFormReady:'New Product Form Ready',
+
+noImageSelected:'No image selected yet',
+currentSavedImage:'Current Saved Image',
+
+saving:'Saving...',
+deleting:'Deleting...',
+
+savedSuccessfully:'Product saved successfully',
+deletedSuccessfully:'Product deleted successfully',
+
+translationCompleted:'Translation completed',
+translationFailed:'Translation failed',
+
+chooseFile:'Choose File',
+noFileChosen:'No file chosen',
+
+productCountSuffix:'product(s)',
+
+stockAvailable:'Available',
+stockLow:'Low Stock',
+stockOut:'Sold Out'
+}
+
+};
+function setLanguage(lang){
+
+  document.documentElement.lang = lang;
+  document.documentElement.dir =
+    lang === 'ar' ? 'rtl' : 'ltr';
+
+  document
+    .querySelectorAll('[data-i18n]')
+    .forEach(el => {
+
+      const key = el.dataset.i18n;
+
+      if(translations[lang][key]){
+
+        if(
+          el.tagName === 'INPUT' ||
+          el.tagName === 'TEXTAREA'
+        ){
+          el.placeholder =
+            translations[lang][key];
+        }else{
+          el.textContent =
+            translations[lang][key];
+        }
+
+      }
+
+    });
+
+    document.body.dir =
+lang === 'ar'
+? 'rtl'
+: 'ltr';
+
+productsList.style.direction =
+lang === 'ar'
+? 'rtl'
+: 'ltr';
+
+  localStorage.setItem(
+    'admin_lang',
+    lang
+  );
+}
 function field(id){ return document.getElementById(id); }
 function setStatus(el, msg){ el.textContent = msg; }
 function updatePreview(url){ imagePreview.src = url || './logo.jpeg'; }
@@ -290,8 +828,13 @@ function values(){
     price: Number(field('price').value || 100),
 shipping: Number(field('shipping').value || 35),
     image_url: field('image_url').value.trim(),
-    stock: field('stock').value.trim() || 'available',
-    featured: field('featured').value === 'true',
+quantity: Number(
+  field('quantity').value || 0
+),
+
+stock: field('stock').value,
+
+featured: field('featured').value === 'true',
     description_ar: field('description_ar').value.trim(),
     description_fr: field('description_fr').value.trim(),
     description_en: field('description_en').value.trim()
@@ -301,16 +844,29 @@ shipping: Number(field('shipping').value || 35),
 function clearForm(){
   selectedId = null;
   selectedImageFile = null;
-  fields.forEach(id => {
-    const el = field(id);
-    if(!el) return;
-    if(el.tagName === 'SELECT') el.value = 'false';
-    else el.value = '';
-  });
+fields.forEach(id => {
+  const el = field(id);
+
+  if(!el) return;
+
+  if(id === 'featured'){
+    el.value = 'false';
+  }
+  else if(id === 'shipping'){
+    el.value = '35';
+  }
+else if(id === 'quantity'){
+  el.value = '10';
+}
+  else{
+    el.value = '';
+  }
+});
+field('stock').value = 'available';
   field('price').value = 100;
 field('shipping').value = 35;
-  field('stock').value = 'available';
-  field('featured').value = 'false';
+field('quantity').value = 10;
+    field('featured').value = 'false';
   imageFileInput.value = '';
   updatePreview('./logo.jpeg');
   setImageMeta('No image selected yet.');
@@ -328,7 +884,8 @@ function fillForm(p){
   field('price').value = p.price ?? 100;
   field('shipping').value = p.shipping ?? 30;
   field('image_url').value = p.image_url || '';
-  field('stock').value = p.stock || 'available';
+field('quantity').value = p.quantity ?? 0;
+field('stock').value = p.stock || 'available';
   field('featured').value = String(!!p.featured);
   field('description_ar').value = p.description_ar || '';
   field('description_fr').value = p.description_fr || '';
@@ -455,47 +1012,139 @@ async function uploadImageFromDevice(){
   setStatus(saveStatus, 'Image uploaded successfully. Now click Save product.');
   uploadImageBtn.disabled = false;
 }
+document.getElementById(
+'removeImageBtn'
+)
+.addEventListener(
+'click',
+() => {
 
+  imageUrlInput.value = '';
+
+  imageFileInput.value = '';
+
+  selectedImageFile = null;
+
+  updatePreview(
+    './logo.jpeg'
+  );
+
+  setImageMeta(
+    'Image removed.'
+  );
+});
 uploadImageBtn.addEventListener('click', uploadImageFromDevice);
 
 async function loadProducts(){
-  setStatus(listStatus, 'Loading products...');
-  const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending:false });
 
-  if(error){
-    setStatus(listStatus, error.message);
-    return;
+  try{
+
+    setStatus(listStatus,'Loading products...');
+
+    const { data, error } =
+      await supabaseClient
+        .from('products')
+        .select('*')
+        .order('created_at',{
+          ascending:false
+        });
+
+    console.log('PRODUCTS',data);
+    console.log('ERROR',error);
+
+    if(error){
+      setStatus(
+        listStatus,
+        error.message
+      );
+      return;
+    }
+
+    const rows = data || [];
+
+    renderProducts(rows);
+
+    setStatus(
+      listStatus,
+      `${rows.length} product(s)`
+    );
+
+  }catch(err){
+
+    console.error(err);
+
+    setStatus(
+      listStatus,
+      err.message
+    );
+
   }
 
-  const rows = data || [];
-  window.__PRODUCTS__ = rows;
+}
 
-  statProducts.textContent = rows.length;
-  statFeatured.textContent = rows.filter(p => p.featured).length;
-  statAvailable.textContent = rows.filter(p => (p.stock || '').toLowerCase() !== 'sold out').length;
-  statValue.textContent = `${rows.reduce((sum,p) => sum + Number(p.price || 0), 0).toFixed(0)} MAD`;
+sortProducts?.addEventListener('change', e => {
+  let rows = [...(window.__PRODUCTS__ || [])];
 
-  if(!rows.length){
-    productsList.innerHTML = '<div class="status">No products yet.</div>';
-    setStatus(listStatus, 'No products found.');
-    return;
+  switch (e.target.value) {
+    case 'high':
+      rows.sort((a, b) => b.price - a.price);
+      break;
+    case 'low':
+      rows.sort((a, b) => a.price - b.price);
+      break;
+    case 'oldest':
+      rows.sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
+      break;
+    default:
+      rows.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
   }
 
-  setStatus(listStatus, `${rows.length} product(s)`);
+  renderProducts(rows);
+});
+function stockLabel(q){
 
+  q = Number(q || 0);
+
+  if(q <= 0)
+    return 'Sold Out';
+
+  if(q < 5)
+    return 'Low Stock';
+
+  return 'Available';
+}
+function renderProducts(rows){
   productsList.innerHTML = rows.map(p => `
     <article class="item">
-      <img src="${p.image_url || './logo.jpeg'}" alt="${p.name_ar || p.name_en || 'product'}" onerror="this.src='./logo.jpeg'">
+      <img src="${p.image_url || './logo.jpeg'}">
       <div>
         <strong>${p.name_ar || p.name_en || p.name_fr || 'Untitled'}</strong>
-        <div class="sub">${p.category || 'No category'} · ${Number(p.price || 0).toFixed(0)} MAD</div>
-        <div class="pill">${p.stock || 'available'}</div>
+<div class="sub">
+  ${p.category}
+</div>
+
+<div class="helper">
+  ${
+    p.created_at
+      ? new Date(
+          p.created_at
+        ).toLocaleDateString()
+      : ''
+  }
+</div>
+<div class="pill">
+  ${stockLabel(p.quantity)}
+</div>
       </div>
-      <button class="btn alt" type="button" onclick="editProductById('${p.id}')">Edit</button>
+      <button
+        class="btn alt"
+        type="button"
+        onclick="editProductById('${p.id}')">
+        Edit
+      </button>
     </article>
   `).join('');
 }
-
 window.editProductById = function(id){
   const p = (window.__PRODUCTS__ || []).find(x => x.id === id);
   if(!p) return;
@@ -530,6 +1179,21 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 });
 
 document.getElementById('newBtn').addEventListener('click', clearForm);
+document.getElementById(
+  'duplicateBtn'
+).addEventListener(
+  'click',
+  () => {
+
+    selectedId = null;
+
+    setStatus(
+      saveStatus,
+      'Product duplicated. Click Save.'
+    );
+
+  }
+);
 
 document.getElementById('saveBtn').addEventListener('click', async () => {
   const payload = values();
@@ -584,8 +1248,137 @@ document.getElementById('deleteBtn').addEventListener('click', async () => {
   setStatus(saveStatus, 'Product deleted successfully.');
   await loadProducts();
 });
+async function autoTranslateFields(){
 
+  const arabicName =
+    field('name_ar').value.trim();
+
+  const arabicDesc =
+    field('description_ar').value.trim();
+
+  if(!arabicName) return;
+
+  try{
+
+    field('name_fr').value =
+      await translate(arabicName,'fr');
+
+    field('name_en').value =
+      await translate(arabicName,'en');
+
+    if(arabicDesc){
+
+      field('description_fr').value =
+        await translate(arabicDesc,'fr');
+
+      field('description_en').value =
+        await translate(arabicDesc,'en');
+
+    }
+
+  }catch(e){
+    console.error(e);
+  }
+
+}
+translateBtn?.addEventListener('click', async () => {
+
+  const arabicName =
+    field('name_ar').value.trim();
+
+  const arabicDesc =
+    field('description_ar').value.trim();
+
+  if(!arabicName){
+    setStatus(
+      saveStatus,
+      'Enter Arabic name first.'
+    );
+    return;
+  }
+
+  try{
+
+    setStatus(
+      saveStatus,
+      'Translating...'
+    );
+
+    field('name_fr').value =
+      await translate(arabicName,'fr');
+
+    field('name_en').value =
+      await translate(arabicName,'en');
+
+    if(arabicDesc){
+
+      field('description_fr').value =
+        await translate(arabicDesc,'fr');
+
+      field('description_en').value =
+        await translate(arabicDesc,'en');
+
+    }
+
+    setStatus(
+      saveStatus,
+      'Translation completed.'
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    setStatus(
+      saveStatus,
+      'Translation failed.'
+    );
+
+  }
+
+});
+let translateTimer;
+
+field('name_ar').addEventListener('input', () => {
+
+  clearTimeout(translateTimer);
+
+  translateTimer =
+    setTimeout(
+      autoTranslateFields,
+      1000
+    );
+
+});
+
+field('description_ar').addEventListener('input', () => {
+
+  clearTimeout(translateTimer);
+
+  translateTimer =
+    setTimeout(
+      autoTranslateFields,
+      1000
+    );
+
+});
 supabaseClient.auth.onAuthStateChange(() => { checkSession(); });
+
+const savedLang =
+  localStorage.getItem('admin_lang') || 'ar';
+
+setLanguage(savedLang);
+
+document.getElementById(
+  'languageSwitcher'
+).value = savedLang;
+
+document.getElementById(
+  'languageSwitcher'
+).addEventListener(
+  'change',
+  e => setLanguage(e.target.value)
+);
 
 clearForm();
 checkSession();
